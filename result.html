@@ -1,0 +1,679 @@
+[info] start tokenizing
+<Prefix '# '><Text 'Markdown: Syntax'><NewLine>
+<NewLine>
+<Prefix '+ '><Indent '  '><Text '[Overview](#overview)'><NewLine>
+<Indent '    '><Prefix '+ '><Indent '  '><Text '[Philosophy](#philosophy)'><NewLine>
+<Indent '    '><Prefix '+ '><Indent '  '><Text '[Inline HTML](#html)'><NewLine>
+<Indent '    '><Prefix '+ '><Indent '  '><Text '[Automatic Escaping for Special Characters](#autoescape)'><NewLine>
+<Prefix '+ '><Indent '  '><Text '[Block Elements](#block)'><NewLine>
+<Indent '    '><Prefix '+ '><Indent '  '><Text '[Paragraphs and Line Breaks](#p)'><NewLine>
+<Indent '    '><Prefix '+ '><Indent '  '><Text '[Headers](#header)'><NewLine>
+<Indent '    '><Prefix '+ '><Indent '  '><Text '[Blockquotes](#blockquote)'><NewLine>
+<Indent '    '><Prefix '+ '><Indent '  '><Text '[Lists](#list)'><NewLine>
+<Indent '    '><Prefix '+ '><Indent '  '><Text '[Code Blocks](#precode)'><NewLine>
+<Indent '    '><Prefix '+ '><Indent '  '><Text '[Horizontal Rules](#hr)'><NewLine>
+<Prefix '+ '><Indent '  '><Text '[Span Elements](#span)'><NewLine>
+<Indent '    '><Prefix '+ '><Indent '  '><Text '[Links](#link)'><NewLine>
+<Indent '    '><Prefix '+ '><Indent '  '><Text '[Emphasis](#em)'><NewLine>
+<Indent '    '><Prefix '+ '><Indent '  '><Text '[Code](#code)'><NewLine>
+<Indent '    '><Prefix '+ '><Indent '  '><Text '[Images](#img)'><NewLine>
+<Prefix '+ '><Indent '  '><Text '[Miscellaneous](#misc)'><NewLine>
+<Indent '    '><Prefix '+ '><Indent '  '><Text '[Backslash Escapes](#backslash)'><NewLine>
+<Indent '    '><Prefix '+ '><Indent '  '><Text '[Automatic Links](#autolink)'><NewLine>
+<NewLine>
+<NewLine>
+<Text 'Note:'><Text ' This document is itself written using Markdown; you'><NewLine>
+<Text 'can [see the source for it by adding '.text' to the URL](/projects/markdown/syntax.text).'><NewLine>
+<NewLine>
+<NewLine>
+<Prefix '## '><Text 'Overview'><NewLine>
+<NewLine>
+<Prefix '### '><Text 'Philosophy'><NewLine>
+<NewLine>
+<Text 'Markdown is intended to be as easy-to-read and easy-to-write as is feasible.'><NewLine>
+<NewLine>
+<Text 'Readability, however, is emphasized above all else. A Markdown-formatted'><NewLine>
+<Text 'document should be publishable as-is, as plain text, without looking'><NewLine>
+<Text 'like it's been marked up with tags or formatting instructions. While'><NewLine>
+<Text 'Markdown's syntax has been influenced by several existing text-to-HTML'><NewLine>
+<Text 'filters -- including [Setext](http://docutils.sourceforge.net/mirror/setext.html), [atx](http://www.aaronsw.com/2002/atx/), [Textile](http://textism.com/tools/textile/), [reStructuredText](http://docutils.sourceforge.net/rst.html),'><NewLine>
+<Text '[Grutatext](http://www.triptico.com/software/grutatxt.html), and [EtText](http://ettext.taint.org/doc/) -- the single biggest source of'><NewLine>
+<Text 'inspiration for Markdown's syntax is the format of plain text email.'><NewLine>
+<NewLine>
+<Prefix '## '><Text 'Block Elements'><NewLine>
+<NewLine>
+<Prefix '### '><Text 'Paragraphs and Line Breaks'><NewLine>
+<NewLine>
+<Text 'A paragraph is simply one or more consecutive lines of text, separated'><NewLine>
+<Text 'by one or more blank lines. (A blank line is any line that looks like a'><NewLine>
+<Text 'blank line -- a line containing nothing but spaces or tabs is considered'><NewLine>
+<Text 'blank.) Normal paragraphs should not be indented with spaces or tabs.'><NewLine>
+<NewLine>
+<Text 'The implication of the "one or more consecutive lines of text" rule is'><NewLine>
+<Text 'that Markdown supports "hard-wrapped" text paragraphs. This differs'><NewLine>
+<Text 'significantly from most other text-o-HTML formatters (including Movable'><NewLine>
+<Text 'Type's "Convert Line Breaks" option) which translate every line break'><NewLine>
+<Text 'character in a paragraph into a '><Backquote><Text '<br />'><Backquote><Text ' tag.'><NewLine>
+<NewLine>
+<Text 'When you '><Text 'do'><Text ' want to insert a '><Backquote><Text '<br />'><Backquote><Text ' break tag using Markdown, you'><NewLine>
+<Text 'end a line with two or more spaces, then type return.'><NewLine>
+<NewLine>
+<Prefix '### '><Text 'Headers'><NewLine>
+<NewLine>
+<Text 'Markdown supports two styles of headers, [Setext] [1] and [atx] [2].'><NewLine>
+<NewLine>
+<Text 'Optionally, you may "close" atx-style headers. This is purely'><NewLine>
+<Text 'cosmetic -- you can use this if you think it looks better. The'><NewLine>
+<Text 'closing hashes don't even need to match the number of hashes'><NewLine>
+<Text 'used to open the header. (The number of opening hashes'><NewLine>
+<Text 'determines the header level.)'><NewLine>
+<NewLine>
+<NewLine>
+<Prefix '### '><Text 'Blockquotes'><NewLine>
+<NewLine>
+<Text 'Markdown uses email-style '><Backquote><Text '>'><Backquote><Text ' characters for blockquoting. If you're'><NewLine>
+<Text 'familiar with quoting passages of text in an email message, then you'><NewLine>
+<Text 'know how to create a blockquote in Markdown. It looks best if you hard'><NewLine>
+<Text 'wrap the text and put a '><Backquote><Text '>'><Backquote><Text ' before every line:'><NewLine>
+<NewLine>
+<Prefix '> '><Text 'This is a blockquote with two paragraphs. Lorem ipsum dolor sit amet,'><NewLine>
+<Prefix '> '><Text 'consectetuer adipiscing elit. Aliquam hendrerit mi posuere lectus.'><NewLine>
+<Prefix '> '><Text 'Vestibulum enim wisi, viverra nec, fringilla in, laoreet vitae, risus.'><NewLine>
+<Prefix '> '><NewLine>
+<Prefix '> '><Text 'Donec sit amet nisl. Aliquam semper ipsum sit amet velit. Suspendisse'><NewLine>
+<Prefix '> '><Text 'id sem consectetuer libero luctus adipiscing.'><NewLine>
+<NewLine>
+<Text 'Markdown allows you to be lazy and only put the '><Backquote><Text '>'><Backquote><Text ' before the first'><NewLine>
+<Text 'line of a hard-wrapped paragraph:'><NewLine>
+<NewLine>
+<Prefix '> '><Text 'This is a blockquote with two paragraphs. Lorem ipsum dolor sit amet,'><NewLine>
+<Text 'consectetuer adipiscing elit. Aliquam hendrerit mi posuere lectus.'><NewLine>
+<Text 'Vestibulum enim wisi, viverra nec, fringilla in, laoreet vitae, risus.'><NewLine>
+<NewLine>
+<Prefix '> '><Text 'Donec sit amet nisl. Aliquam semper ipsum sit amet velit. Suspendisse'><NewLine>
+<Text 'id sem consectetuer libero luctus adipiscing.'><NewLine>
+<NewLine>
+<Text 'Blockquotes can be nested (i.e. a blockquote-in-a-blockquote) by'><NewLine>
+<Text 'adding additional levels of '><Backquote><Text '>'><Backquote><Text ':'><NewLine>
+<NewLine>
+<Prefix '> '><Text 'This is the first level of quoting.'><NewLine>
+<Prefix '> '><Prefix '> '><Prefix '> '><Text 'This is nested blockquote.'><NewLine>
+<Prefix '> '><Prefix '> '><Text 'Back to the first level.'><NewLine>
+<NewLine>
+<Text 'Blockquotes can contain other Markdown elements, including headers, lists,'><NewLine>
+<Text 'and code blocks:'><NewLine>
+<NewLine>
+<Prefix '> '><Prefix '## '><Text 'This is a header.'><NewLine>
+<Prefix '> '><NewLine>
+<Prefix '> '><Prefix '1. '><Indent '  '><Text 'This is the first list item.'><NewLine>
+<Prefix '> '><Prefix '1. '><Indent '  '><Text 'This is the second list item.'><NewLine>
+<Prefix '> '><NewLine>
+<Prefix '> '><Text 'Here's some example code:'><NewLine>
+<Prefix '> '><NewLine>
+<Prefix '> '><Indent '    '><Text 'return shell'><Text 'exec("echo $input | $markdown'><Text 'script");'><NewLine>
+<NewLine>
+<Text 'Any decent text editor should make email-style quoting easy. For'><NewLine>
+<Text 'example, with BBEdit, you can make a selection and choose Increase'><NewLine>
+<Text 'Quote Level from the Text menu.'><NewLine>
+<NewLine>
+<NewLine>
+<Prefix '### '><Text 'Lists'><NewLine>
+<NewLine>
+<Text 'Markdown supports ordered (numbered) and unordered (bulleted) lists.'><NewLine>
+<NewLine>
+<Text 'Unordered lists use asterisks, pluses, and hyphens -- interchangably'><NewLine>
+<Text '-- as list markers:'><NewLine>
+<NewLine>
+<Prefix '+ '><Indent '  '><Text 'Red'><NewLine>
+<Prefix '+ '><Indent '  '><Text 'Green'><NewLine>
+<Prefix '+ '><Indent '  '><Text 'Blue'><NewLine>
+<NewLine>
+<Text 'is equivalent to:'><NewLine>
+<NewLine>
+<Prefix '+ '><Indent '  '><Text 'Red'><NewLine>
+<Prefix '+ '><Indent '  '><Text 'Green'><NewLine>
+<Prefix '+ '><Indent '  '><Text 'Blue'><NewLine>
+<NewLine>
+<Text 'and:'><NewLine>
+<NewLine>
+<Prefix '+ '><Indent '  '><Text 'Red'><NewLine>
+<Prefix '+ '><Indent '  '><Text 'Green'><NewLine>
+<Prefix '+ '><Indent '  '><Text 'Blue'><NewLine>
+<NewLine>
+<Text 'Ordered lists use numbers followed by periods:'><NewLine>
+<NewLine>
+<Prefix '1. '><Indent ' '><Text 'Bird'><NewLine>
+<Prefix '1. '><Indent ' '><Text 'McHale'><NewLine>
+<Prefix '1. '><Indent ' '><Text 'Parish'><NewLine>
+<NewLine>
+<Text 'It's important to note that the actual numbers you use to mark the'><NewLine>
+<Text 'list have no effect on the HTML output Markdown produces. The HTML'><NewLine>
+<Text 'Markdown produces from the above list is:'><NewLine>
+<NewLine>
+<Text 'If you instead wrote the list in Markdown like this:'><NewLine>
+<NewLine>
+<Prefix '1. '><Indent ' '><Text 'Bird'><NewLine>
+<Prefix '1. '><Indent ' '><Text 'McHale'><NewLine>
+<Prefix '1. '><Indent ' '><Text 'Parish'><NewLine>
+<NewLine>
+<Text 'or even:'><NewLine>
+<NewLine>
+<Prefix '1. '><Text 'Bird'><NewLine>
+<Prefix '1. '><Text 'McHale'><NewLine>
+<Prefix '1. '><Text 'Parish'><NewLine>
+<NewLine>
+<Text 'you'd get the exact same HTML output. The point is, if you want to,'><NewLine>
+<Text 'you can use ordinal numbers in your ordered Markdown lists, so that'><NewLine>
+<Text 'the numbers in your source match the numbers in your published HTML.'><NewLine>
+<Text 'But if you want to be lazy, you don't have to.'><NewLine>
+<NewLine>
+<Text 'To make lists look nice, you can wrap items with hanging indents:'><NewLine>
+<NewLine>
+<Prefix '+ '><Indent '  '><Text 'Lorem ipsum dolor sit amet, consectetuer adipiscing elit.'><NewLine>
+<Indent '    '><Text 'Aliquam hendrerit mi posuere lectus. Vestibulum enim wisi,'><NewLine>
+<Indent '    '><Text 'viverra nec, fringilla in, laoreet vitae, risus.'><NewLine>
+<Prefix '+ '><Indent '  '><Text 'Donec sit amet nisl. Aliquam semper ipsum sit amet velit.'><NewLine>
+<Indent '    '><Text 'Suspendisse id sem consectetuer libero luctus adipiscing.'><NewLine>
+<NewLine>
+<Text 'But if you want to be lazy, you don't have to:'><NewLine>
+<NewLine>
+<Prefix '+ '><Indent '  '><Text 'Lorem ipsum dolor sit amet, consectetuer adipiscing elit.'><NewLine>
+<Text 'Aliquam hendrerit mi posuere lectus. Vestibulum enim wisi,'><NewLine>
+<Text 'viverra nec, fringilla in, laoreet vitae, risus.'><NewLine>
+<Prefix '+ '><Indent '  '><Text 'Donec sit amet nisl. Aliquam semper ipsum sit amet velit.'><NewLine>
+<Text 'Suspendisse id sem consectetuer libero luctus adipiscing.'><NewLine>
+<NewLine>
+<Text 'List items may consist of multiple paragraphs. Each subsequent'><NewLine>
+<Text 'paragraph in a list item must be indented by either 4 spaces'><NewLine>
+<Text 'or one tab:'><NewLine>
+<NewLine>
+<Prefix '1. '><Indent ' '><Text 'This is a list item with two paragraphs. Lorem ipsum dolor'><NewLine>
+<Indent '    '><Text 'sit amet, consectetuer adipiscing elit. Aliquam hendrerit'><NewLine>
+<Indent '    '><Text 'mi posuere lectus.'><NewLine>
+<NewLine>
+<Indent '    '><Text 'Vestibulum enim wisi, viverra nec, fringilla in, laoreet'><NewLine>
+<Indent '    '><Text 'vitae, risus. Donec sit amet nisl. Aliquam semper ipsum'><NewLine>
+<Indent '    '><Text 'sit amet velit.'><NewLine>
+<NewLine>
+<Prefix '1. '><Indent ' '><Text 'Suspendisse id sem consectetuer libero luctus adipiscing.'><NewLine>
+<NewLine>
+<Text 'It looks nice if you indent every line of the subsequent'><NewLine>
+<Text 'paragraphs, but here again, Markdown will allow you to be'><NewLine>
+<Text 'lazy:'><NewLine>
+<NewLine>
+<Prefix '+ '><Indent '  '><Text 'This is a list item with two paragraphs.'><NewLine>
+<NewLine>
+<Indent '    '><Text 'This is the second paragraph in the list item. You're'><NewLine>
+<Text 'only required to indent the first line. Lorem ipsum dolor'><NewLine>
+<Text 'sit amet, consectetuer adipiscing elit.'><NewLine>
+<NewLine>
+<Prefix '+ '><Indent '  '><Text 'Another item in the same list.'><NewLine>
+<NewLine>
+<Text 'To put a blockquote within a list item, the blockquote's '><Backquote><Text '>'><Backquote><NewLine>
+<Text 'delimiters need to be indented:'><NewLine>
+<NewLine>
+<Prefix '+ '><Indent '  '><Text 'A list item with a blockquote:'><NewLine>
+<NewLine>
+<Indent '    '><Prefix '> '><Text 'This is a blockquote'><NewLine>
+<Indent '    '><Prefix '> '><Text 'inside a list item.'><NewLine>
+<NewLine>
+<Text 'To put a code block within a list item, the code block needs'><NewLine>
+<Text 'to be indented '><Text 'twice'><Text ' -- 8 spaces or two tabs:'><NewLine>
+<NewLine>
+<Prefix '+ '><Indent '  '><Text 'A list item with a code block:'><NewLine>
+<NewLine>
+<Indent '        '><Text '<code goes here>'><NewLine>
+<NewLine>
+<Prefix '### '><Text 'Code Blocks'><NewLine>
+<NewLine>
+<Text 'Pre-formatted code blocks are used for writing about programming or'><NewLine>
+<Text 'markup source code. Rather than forming normal paragraphs, the lines'><NewLine>
+<Text 'of a code block are interpreted literally. Markdown wraps a code block'><NewLine>
+<Text 'in both '><Backquote><Text '<pre>'><Backquote><Text ' and '><Backquote><Text '<code>'><Backquote><Text ' tags.'><NewLine>
+<NewLine>
+<Text 'To produce a code block in Markdown, simply indent every line of the'><NewLine>
+<Text 'block by at least 4 spaces or 1 tab.'><NewLine>
+<NewLine>
+<Text 'This is a normal paragraph:'><NewLine>
+<NewLine>
+<Indent '    '><Text 'This is a code block.'><NewLine>
+<NewLine>
+<Text 'Here is an example of AppleScript:'><NewLine>
+<NewLine>
+<Indent '    '><Text 'tell application "Foo"'><NewLine>
+<Indent '        '><Text 'beep'><NewLine>
+<Indent '    '><Text 'end tell'><NewLine>
+<NewLine>
+<Text 'A code block continues until it reaches a line that is not indented'><NewLine>
+<Text '(or the end of the article).'><NewLine>
+<NewLine>
+<Text 'Within a code block, ampersands ('><Backquote><Text '&'><Backquote><Text ') and angle brackets ('><Backquote><Text '<'><Backquote><Text ' and '><Backquote><Text '>'><Backquote><Text ')'><NewLine>
+<Text 'are automatically converted into HTML entities. This makes it very'><NewLine>
+<Text 'easy to include example HTML source code using Markdown -- just paste'><NewLine>
+<Text 'it and indent it, and Markdown will handle the hassle of encoding the'><NewLine>
+<Text 'ampersands and angle brackets. For example, this:'><NewLine>
+<NewLine>
+<Indent '    '><Text '<div class="footer">'><NewLine>
+<Indent '        '><Text '&copy; 2004 Foo Corporation'><NewLine>
+<Indent '    '><Text '</div>'><NewLine>
+<NewLine>
+<Text 'Regular Markdown syntax is not processed within code blocks. E.g.,'><NewLine>
+<Text 'asterisks are just literal asterisks within a code block. This means'><NewLine>
+<Text 'it's also easy to use Markdown to write about Markdown's own syntax.'><NewLine>
+<NewLine>
+<Backquote><Backquote><Backquote><NewLine>
+<Text 'tell application "Foo"'><NewLine>
+<Indent '    '><Text 'beep'><NewLine>
+<Text 'end tell'><NewLine>
+<Backquote><Backquote><Backquote><NewLine>
+<NewLine>
+<Prefix '## '><Text 'Span Elements'><NewLine>
+<NewLine>
+<Prefix '### '><Text 'Links'><NewLine>
+<NewLine>
+<Text 'Markdown supports two style of links: '><Text 'inline'><Text ' and '><Text 'reference'><Text '.'><NewLine>
+<NewLine>
+<Text 'In both styles, the link text is delimited by [square brackets].'><NewLine>
+<NewLine>
+<Text 'To create an inline link, use a set of regular parentheses immediately'><NewLine>
+<Text 'after the link text's closing square bracket. Inside the parentheses,'><NewLine>
+<Text 'put the URL where you want the link to point, along with an '><Text 'optional'><NewLine>
+<Text 'title for the link, surrounded in quotes. For example:'><NewLine>
+<NewLine>
+<Text 'This is [an example](http://example.com/) inline link.'><NewLine>
+<NewLine>
+<Text '[This link](http://example.net/) has no title attribute.'><NewLine>
+<NewLine>
+<Prefix '### '><Text 'Emphasis'><NewLine>
+<NewLine>
+<Text 'Markdown treats asterisks ('><Backquote><Backquote><Text ') and underscores ('><Backquote><Backquote><Text ') as indicators of'><NewLine>
+<Text 'emphasis. Text wrapped with one '><Backquote><Backquote><Text ' or '><Backquote><Backquote><Text ' will be wrapped with an'><NewLine>
+<Text 'HTML '><Backquote><Text '<em>'><Backquote><Text ' tag; double '><Backquote><Backquote><Text ''s or '><Backquote><Backquote><Text ''s will be wrapped with an HTML'><NewLine>
+<Backquote><Text '<strong>'><Backquote><Text ' tag. E.g., this input:'><NewLine>
+<NewLine>
+<Text 'single asterisks'><NewLine>
+<NewLine>
+<Text 'single underscores'><NewLine>
+<NewLine>
+<Text 'double asterisks'><NewLine>
+<NewLine>
+<Text 'double underscores'><NewLine>
+<NewLine>
+<Prefix '### '><Text 'Code'><NewLine>
+<NewLine>
+<Text 'To indicate a span of code, wrap it with backtick quotes ('><Backquote><Backquote><Text ' '><Backquote><Text ' '><Backquote><Backquote><Text ').'><NewLine>
+<Text 'Unlike a pre-formatted code block, a code span indicates code within a'><NewLine>
+<Text 'normal paragraph. For example:'><NewLine>
+<NewLine>
+<Text 'Use the '><Backquote><Text 'printf()'><Backquote><Text ' function.t'><NewLine>
+<NewLine>
+[info] start parsing
+[info] generated html
+<h1>Markdown: Syntax</h1>
+<p><!-- empty --></p>
+<p>[Overview](#overview)</p>
+<p>[Philosophy](#philosophy)</p>
+<p>[Inline HTML](#html)</p>
+<p>[Automatic Escaping for Special Characters](#autoescape)</p>
+<p>[Block Elements](#block)</p>
+<p>[Paragraphs and Line Breaks](#p)</p>
+<p>[Headers](#header)</p>
+<p>[Blockquotes](#blockquote)</p>
+<p>[Lists](#list)</p>
+<p>[Code Blocks](#precode)</p>
+<p>[Horizontal Rules](#hr)</p>
+<p>[Span Elements](#span)</p>
+<p>[Links](#link)</p>
+<p>[Emphasis](#em)</p>
+<p>[Code](#code)</p>
+<p>[Images](#img)</p>
+<p>[Miscellaneous](#misc)</p>
+<p>[Backslash Escapes](#backslash)</p>
+<p>[Automatic Links](#autolink)</p>
+<p><!-- empty --></p>
+<p><!-- empty --></p>
+<p>Note:</p>
+<p> This document is itself written using Markdown; you</p>
+<p>can [see the source for it by adding '.text' to the URL](/projects/markdown/syntax.text).</p>
+<p><!-- empty --></p>
+<h2>Overview</h2>
+<p><!-- empty --></p>
+<h3>Philosophy</h3>
+<p><!-- empty --></p>
+<p>Markdown is intended to be as easy-to-read and easy-to-write as is feasible.</p>
+<p><!-- empty --></p>
+<p>Readability, however, is emphasized above all else. A Markdown-formatted</p>
+<p>document should be publishable as-is, as plain text, without looking</p>
+<p>like it's been marked up with tags or formatting instructions. While</p>
+<p>Markdown's syntax has been influenced by several existing text-to-HTML</p>
+<p>filters -- including [Setext](http://docutils.sourceforge.net/mirror/setext.html), [atx](http://www.aaronsw.com/2002/atx/), [Textile](http://textism.com/tools/textile/), [reStructuredText](http://docutils.sourceforge.net/rst.html),</p>
+<p>[Grutatext](http://www.triptico.com/software/grutatxt.html), and [EtText](http://ettext.taint.org/doc/) -- the single biggest source of</p>
+<p>inspiration for Markdown's syntax is the format of plain text email.</p>
+<p><!-- empty --></p>
+<h2>Block Elements</h2>
+<p><!-- empty --></p>
+<h3>Paragraphs and Line Breaks</h3>
+<p><!-- empty --></p>
+<p>A paragraph is simply one or more consecutive lines of text, separated</p>
+<p>by one or more blank lines. (A blank line is any line that looks like a</p>
+<p>blank line -- a line containing nothing but spaces or tabs is considered</p>
+<p>blank.) Normal paragraphs should not be indented with spaces or tabs.</p>
+<p><!-- empty --></p>
+<p>The implication of the "one or more consecutive lines of text" rule is</p>
+<p>that Markdown supports "hard-wrapped" text paragraphs. This differs</p>
+<p>significantly from most other text-o-HTML formatters (including Movable</p>
+<p>Type's "Convert Line Breaks" option) which translate every line break</p>
+<p>character in a paragraph into a </p>
+<p><br /></p>
+<p> tag.</p>
+<p><!-- empty --></p>
+<p>When you </p>
+<p>do</p>
+<p> want to insert a </p>
+<p><br /></p>
+<p> break tag using Markdown, you</p>
+<p>end a line with two or more spaces, then type return.</p>
+<p><!-- empty --></p>
+<h3>Headers</h3>
+<p><!-- empty --></p>
+<p>Markdown supports two styles of headers, [Setext] [1] and [atx] [2].</p>
+<p><!-- empty --></p>
+<p>Optionally, you may "close" atx-style headers. This is purely</p>
+<p>cosmetic -- you can use this if you think it looks better. The</p>
+<p>closing hashes don't even need to match the number of hashes</p>
+<p>used to open the header. (The number of opening hashes</p>
+<p>determines the header level.)</p>
+<p><!-- empty --></p>
+<p><!-- empty --></p>
+<h3>Blockquotes</h3>
+<p><!-- empty --></p>
+<p>Markdown uses email-style </p>
+<p>></p>
+<p> characters for blockquoting. If you're</p>
+<p>familiar with quoting passages of text in an email message, then you</p>
+<p>know how to create a blockquote in Markdown. It looks best if you hard</p>
+<p>wrap the text and put a </p>
+<p>></p>
+<p> before every line:</p>
+<p><!-- empty --></p>
+<blockquote>
+  <p>This is a blockquote with two paragraphs. Lorem ipsum dolor sit amet,</p>
+  <p>consectetuer adipiscing elit. Aliquam hendrerit mi posuere lectus.</p>
+  <p>Vestibulum enim wisi, viverra nec, fringilla in, laoreet vitae, risus.</p>
+  <p>Donec sit amet nisl. Aliquam semper ipsum sit amet velit. Suspendisse</p>
+  <p>id sem consectetuer libero luctus adipiscing.</p>
+</blockquote>
+<p><!-- empty --></p>
+<p>Markdown allows you to be lazy and only put the </p>
+<p>></p>
+<p> before the first</p>
+<p>line of a hard-wrapped paragraph:</p>
+<p><!-- empty --></p>
+<blockquote>
+  <p>This is a blockquote with two paragraphs. Lorem ipsum dolor sit amet,</p>
+</blockquote>
+<p>consectetuer adipiscing elit. Aliquam hendrerit mi posuere lectus.</p>
+<p>Vestibulum enim wisi, viverra nec, fringilla in, laoreet vitae, risus.</p>
+<p><!-- empty --></p>
+<blockquote>
+  <p>Donec sit amet nisl. Aliquam semper ipsum sit amet velit. Suspendisse</p>
+</blockquote>
+<p>id sem consectetuer libero luctus adipiscing.</p>
+<p><!-- empty --></p>
+<p>Blockquotes can be nested (i.e. a blockquote-in-a-blockquote) by</p>
+<p>adding additional levels of </p>
+<p>></p>
+<p>:</p>
+<p><!-- empty --></p>
+<blockquote>
+  <p>This is the first level of quoting.</p>
+  <blockquote>
+    <blockquote>
+      <p>This is nested blockquote.</p>
+    </blockquote>
+    <p>Back to the first level.</p>
+  </blockquote>
+</blockquote>
+<p><!-- empty --></p>
+<p>Blockquotes can contain other Markdown elements, including headers, lists,</p>
+<p>and code blocks:</p>
+<p><!-- empty --></p>
+<blockquote>
+  <h2>This is a header.</h2>
+  <blockquote>
+  </blockquote>
+  <p>This is the first list item.</p>
+  <p>This is the second list item.</p>
+  <p>Here's some example code:</p>
+  <p>return shell</p>
+  <p>exec("echo $input | $markdown</p>
+  <p>script");</p>
+</blockquote>
+<p><!-- empty --></p>
+<p>Any decent text editor should make email-style quoting easy. For</p>
+<p>example, with BBEdit, you can make a selection and choose Increase</p>
+<p>Quote Level from the Text menu.</p>
+<p><!-- empty --></p>
+<p><!-- empty --></p>
+<h3>Lists</h3>
+<p><!-- empty --></p>
+<p>Markdown supports ordered (numbered) and unordered (bulleted) lists.</p>
+<p><!-- empty --></p>
+<p>Unordered lists use asterisks, pluses, and hyphens -- interchangably</p>
+<p>-- as list markers:</p>
+<p><!-- empty --></p>
+<p>Red</p>
+<p>Green</p>
+<p>Blue</p>
+<p><!-- empty --></p>
+<p>is equivalent to:</p>
+<p><!-- empty --></p>
+<p>Red</p>
+<p>Green</p>
+<p>Blue</p>
+<p><!-- empty --></p>
+<p>and:</p>
+<p><!-- empty --></p>
+<p>Red</p>
+<p>Green</p>
+<p>Blue</p>
+<p><!-- empty --></p>
+<p>Ordered lists use numbers followed by periods:</p>
+<p><!-- empty --></p>
+<p>Bird</p>
+<p>McHale</p>
+<p>Parish</p>
+<p><!-- empty --></p>
+<p>It's important to note that the actual numbers you use to mark the</p>
+<p>list have no effect on the HTML output Markdown produces. The HTML</p>
+<p>Markdown produces from the above list is:</p>
+<p><!-- empty --></p>
+<p>If you instead wrote the list in Markdown like this:</p>
+<p><!-- empty --></p>
+<p>Bird</p>
+<p>McHale</p>
+<p>Parish</p>
+<p><!-- empty --></p>
+<p>or even:</p>
+<p><!-- empty --></p>
+<p>Bird</p>
+<p>McHale</p>
+<p>Parish</p>
+<p><!-- empty --></p>
+<p>you'd get the exact same HTML output. The point is, if you want to,</p>
+<p>you can use ordinal numbers in your ordered Markdown lists, so that</p>
+<p>the numbers in your source match the numbers in your published HTML.</p>
+<p>But if you want to be lazy, you don't have to.</p>
+<p><!-- empty --></p>
+<p>To make lists look nice, you can wrap items with hanging indents:</p>
+<p><!-- empty --></p>
+<p>Lorem ipsum dolor sit amet, consectetuer adipiscing elit.</p>
+<p>Aliquam hendrerit mi posuere lectus. Vestibulum enim wisi,</p>
+<p>viverra nec, fringilla in, laoreet vitae, risus.</p>
+<p>Donec sit amet nisl. Aliquam semper ipsum sit amet velit.</p>
+<p>Suspendisse id sem consectetuer libero luctus adipiscing.</p>
+<p><!-- empty --></p>
+<p>But if you want to be lazy, you don't have to:</p>
+<p><!-- empty --></p>
+<p>Lorem ipsum dolor sit amet, consectetuer adipiscing elit.</p>
+<p>Aliquam hendrerit mi posuere lectus. Vestibulum enim wisi,</p>
+<p>viverra nec, fringilla in, laoreet vitae, risus.</p>
+<p>Donec sit amet nisl. Aliquam semper ipsum sit amet velit.</p>
+<p>Suspendisse id sem consectetuer libero luctus adipiscing.</p>
+<p><!-- empty --></p>
+<p>List items may consist of multiple paragraphs. Each subsequent</p>
+<p>paragraph in a list item must be indented by either 4 spaces</p>
+<p>or one tab:</p>
+<p><!-- empty --></p>
+<p>This is a list item with two paragraphs. Lorem ipsum dolor</p>
+<p>sit amet, consectetuer adipiscing elit. Aliquam hendrerit</p>
+<p>mi posuere lectus.</p>
+<p><!-- empty --></p>
+<p>Vestibulum enim wisi, viverra nec, fringilla in, laoreet</p>
+<p>vitae, risus. Donec sit amet nisl. Aliquam semper ipsum</p>
+<p>sit amet velit.</p>
+<p><!-- empty --></p>
+<p>Suspendisse id sem consectetuer libero luctus adipiscing.</p>
+<p><!-- empty --></p>
+<p>It looks nice if you indent every line of the subsequent</p>
+<p>paragraphs, but here again, Markdown will allow you to be</p>
+<p>lazy:</p>
+<p><!-- empty --></p>
+<p>This is a list item with two paragraphs.</p>
+<p><!-- empty --></p>
+<p>This is the second paragraph in the list item. You're</p>
+<p>only required to indent the first line. Lorem ipsum dolor</p>
+<p>sit amet, consectetuer adipiscing elit.</p>
+<p><!-- empty --></p>
+<p>Another item in the same list.</p>
+<p><!-- empty --></p>
+<p>To put a blockquote within a list item, the blockquote's </p>
+<p>></p>
+<p>delimiters need to be indented:</p>
+<p><!-- empty --></p>
+<p>A list item with a blockquote:</p>
+<p><!-- empty --></p>
+<blockquote>
+  <p>This is a blockquote</p>
+  <p>inside a list item.</p>
+</blockquote>
+<p><!-- empty --></p>
+<p>To put a code block within a list item, the code block needs</p>
+<p>to be indented </p>
+<p>twice</p>
+<p> -- 8 spaces or two tabs:</p>
+<p><!-- empty --></p>
+<p>A list item with a code block:</p>
+<p><!-- empty --></p>
+<p><code goes here></p>
+<p><!-- empty --></p>
+<h3>Code Blocks</h3>
+<p><!-- empty --></p>
+<p>Pre-formatted code blocks are used for writing about programming or</p>
+<p>markup source code. Rather than forming normal paragraphs, the lines</p>
+<p>of a code block are interpreted literally. Markdown wraps a code block</p>
+<p>in both </p>
+<p><pre></p>
+<p> and </p>
+<p><code></p>
+<p> tags.</p>
+<p><!-- empty --></p>
+<p>To produce a code block in Markdown, simply indent every line of the</p>
+<p>block by at least 4 spaces or 1 tab.</p>
+<p><!-- empty --></p>
+<p>This is a normal paragraph:</p>
+<p><!-- empty --></p>
+<p>This is a code block.</p>
+<p><!-- empty --></p>
+<p>Here is an example of AppleScript:</p>
+<p><!-- empty --></p>
+<p>tell application "Foo"</p>
+<p>beep</p>
+<p>end tell</p>
+<p><!-- empty --></p>
+<p>A code block continues until it reaches a line that is not indented</p>
+<p>(or the end of the article).</p>
+<p><!-- empty --></p>
+<p>Within a code block, ampersands (</p>
+<p>&</p>
+<p>) and angle brackets (</p>
+<p><</p>
+<p> and </p>
+<p>></p>
+<p>)</p>
+<p>are automatically converted into HTML entities. This makes it very</p>
+<p>easy to include example HTML source code using Markdown -- just paste</p>
+<p>it and indent it, and Markdown will handle the hassle of encoding the</p>
+<p>ampersands and angle brackets. For example, this:</p>
+<p><!-- empty --></p>
+<p><div class="footer"></p>
+<p>&copy; 2004 Foo Corporation</p>
+<p></div></p>
+<p><!-- empty --></p>
+<p>Regular Markdown syntax is not processed within code blocks. E.g.,</p>
+<p>asterisks are just literal asterisks within a code block. This means</p>
+<p>it's also easy to use Markdown to write about Markdown's own syntax.</p>
+<p><!-- empty --></p>
+<p>tell application "Foo"</p>
+<p>beep</p>
+<p>end tell</p>
+<p><!-- empty --></p>
+<h2>Span Elements</h2>
+<p><!-- empty --></p>
+<h3>Links</h3>
+<p><!-- empty --></p>
+<p>Markdown supports two style of links: </p>
+<p>inline</p>
+<p> and </p>
+<p>reference</p>
+<p>.</p>
+<p><!-- empty --></p>
+<p>In both styles, the link text is delimited by [square brackets].</p>
+<p><!-- empty --></p>
+<p>To create an inline link, use a set of regular parentheses immediately</p>
+<p>after the link text's closing square bracket. Inside the parentheses,</p>
+<p>put the URL where you want the link to point, along with an </p>
+<p>optional</p>
+<p>title for the link, surrounded in quotes. For example:</p>
+<p><!-- empty --></p>
+<p>This is [an example](http://example.com/) inline link.</p>
+<p><!-- empty --></p>
+<p>[This link](http://example.net/) has no title attribute.</p>
+<p><!-- empty --></p>
+<h3>Emphasis</h3>
+<p><!-- empty --></p>
+<p>Markdown treats asterisks (</p>
+<p>) and underscores (</p>
+<p>) as indicators of</p>
+<p>emphasis. Text wrapped with one </p>
+<p> or </p>
+<p> will be wrapped with an</p>
+<p>HTML </p>
+<p><em></p>
+<p> tag; double </p>
+<p>'s or </p>
+<p>'s will be wrapped with an HTML</p>
+<p><strong></p>
+<p> tag. E.g., this input:</p>
+<p><!-- empty --></p>
+<p>single asterisks</p>
+<p><!-- empty --></p>
+<p>single underscores</p>
+<p><!-- empty --></p>
+<p>double asterisks</p>
+<p><!-- empty --></p>
+<p>double underscores</p>
+<p><!-- empty --></p>
+<h3>Code</h3>
+<p><!-- empty --></p>
+<p>To indicate a span of code, wrap it with backtick quotes (</p>
+<p> </p>
+<p> </p>
+<p>).</p>
+<p>Unlike a pre-formatted code block, a code span indicates code within a</p>
+<p>normal paragraph. For example:</p>
+<p><!-- empty --></p>
+<p>Use the </p>
+<p>printf()</p>
+<p> function.t</p>
+<p><!-- empty --></p>
