@@ -8,13 +8,14 @@
 using namespace std::string_literals;
 
 namespace m2h {
-namespace parser {
 
 enum class NodeType {
   None = 0,
   Paragraph,
   BlockQuote,
+  UnorderedList,
   UnorderedListItem,
+  OrderedList,
   OrderedListItem,
   EmptyLine,
   Horizontal,
@@ -76,6 +77,46 @@ struct ParagraphNode : Node {
   std::string text;
 };
 
+struct OrderedListNode : Node {
+  OrderedListNode() : Node(NodeType::OrderedList) {}
+  virtual void print(const std::string& prefix) override {
+    std::cout << prefix << "<ol>" << std::endl;
+    for (auto&& childNode : children) {
+      childNode->print(prefix + "  ");
+    }
+    std::cout << prefix << "</ol>" << std::endl;
+  }
+};
+
+struct OrderedListItemNode : Node {
+  OrderedListItemNode(const std::string& text)
+      : Node(NodeType::OrderedListItem), text{text} {}
+  virtual void print(const std::string& prefix) override {
+    std::cout << prefix << "<li>" << text << "</li>" << std::endl;
+  }
+  std::string text;
+};
+
+struct UnorderedListNode : Node {
+  UnorderedListNode() : Node(NodeType::UnorderedList) {}
+  virtual void print(const std::string& prefix) override {
+    std::cout << prefix << "<ul>" << std::endl;
+    for (auto&& childNode : children) {
+      childNode->print(prefix + "  ");
+    }
+    std::cout << prefix << "</ul>" << std::endl;
+  }
+};
+
+struct UnorderedListItemNode : Node {
+  UnorderedListItemNode(const std::string& text)
+      : Node(NodeType::UnorderedListItem), text{text} {}
+  virtual void print(const std::string& prefix) override {
+    std::cout << prefix << "<li>" << text << "</li>" << std::endl;
+  }
+  std::string text;
+};
+
 struct EmptyLineNode : Node {
   EmptyLineNode() : Node(NodeType::EmptyLine) {}
   virtual void print(const std::string& prefix) override {
@@ -94,5 +135,4 @@ struct CodeBlockNode : Node {
   std::vector<std::string> lines;
 };
 
-}  // namespace parser
 }  // namespace m2h

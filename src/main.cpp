@@ -27,31 +27,30 @@ int main(int argc, char const* argv[]) {
   const char* p = s.c_str();
 
   std::cout << "[info] start tokenizing" << std::endl;
-  m2h::tokenizer::Tokenizer tokenizer;
-  std::vector<m2h::tokenizer::Token> tokens = tokenizer.tokenize(p);
+  m2h::Tokenizer tokenizer;
+  std::vector<m2h::Token> tokens = tokenizer.tokenize(p);
   for (auto token : tokens) {
     switch (token.kind) {
-      case m2h::tokenizer::TokenKind::Prefix:
+      case m2h::TokenKind::Prefix:
         std::cout << "<Prefix '" << token.value << "'>";
         break;
-      case m2h::tokenizer::TokenKind::BackQuote:
+      case m2h::TokenKind::BackQuote:
         std::cout << "<Backquote>";
         break;
-      case m2h::tokenizer::TokenKind::Indent:
+      case m2h::TokenKind::Indent:
         std::cout << "<Indent '" << token.value << "'>";
         break;
-      case m2h::tokenizer::TokenKind::Text:
+      case m2h::TokenKind::Text:
         std::cout << "<Text '" << token.value << "'>";
         break;
-      case m2h::tokenizer::TokenKind::NewLine:
+      case m2h::TokenKind::NewLine:
         std::cout << "<NewLine>" << std::endl;
         break;
     }
   }
 
-  std::cout << "[info] start parsing" << std::endl;
-  m2h::parser::Parser parser;
-  std::vector<m2h::parser::Node*> nodes = parser.parse(tokens);
+  m2h::Parser parser;
+  std::vector<m2h::Node*> nodes = parser.parse(tokens);
 
   std::cout << "[info] generated html" << std::endl;
   for (auto&& node : nodes) {

@@ -3,7 +3,6 @@
 #include "Node.hpp"
 
 namespace m2h {
-namespace parser {
 
 struct ParsingContext {
   int line, column;
@@ -18,8 +17,8 @@ struct ParsingContext {
     auto children = parent->children;
     return children.size() > 0 ? children.back() : nullptr;
   }
+
   void addNode(Node *node) { parent->children.push_back(node); }
 };
 
-}  // namespace parser
 }  // namespace m2h

@@ -9,7 +9,6 @@
 #include "Token.hpp"
 
 namespace m2h {
-namespace tokenizer {
 
 struct TokenizerContext {
   const char* savepoint = nullptr;
@@ -157,8 +156,9 @@ class Tokenizer {
     const char* loc = p;
     if (*p != '>') return false;
     p += 1;
-    if (!isCrlf(*p) && *p != ' ') return false;
-    p += 1;
+    while (isSpace(*p)) {
+      ++p;
+    }
     tokens.emplace_back(TokenKind::Prefix, "> ", loc);
     return true;
   }
@@ -212,9 +212,7 @@ class Tokenizer {
     int count = skipWhile(p, isDigit);
     if (*p != '.') return false;
     ++p;
-    if (!isSpace(*p)) return false;
-    ++p;
-    tokens.emplace_back(TokenKind::Prefix, std::string(count, '1') + ". ", loc);
+    tokens.emplace_back(TokenKind::Prefix, "1.", loc);
     return true;
   }
 
@@ -223,5 +221,4 @@ class Tokenizer {
   TokenizerContext context;
 };
 
-}  // namespace tokenizer
 }  // namespace m2h

@@ -10,9 +10,6 @@
 #include "ParsingContext.hpp"
 
 namespace m2h {
-namespace parser {
-
-using namespace tokenizer;
 
 class Parser {
  public:
@@ -22,38 +19,38 @@ class Parser {
     Node *root = new RootNode();
     context.parent = root;
 
-    auto onParsed = []() {};
-
-    bool isBeginOfLine = true;
-
     std::vector<Token>::const_iterator it = tokens.begin();
     while (it != tokens.end()) {
-      isBeginOfLine = it->kind == tokenizer::TokenKind::NewLine;
+      bool isBeginOfLine = it->kind == TokenKind::NewLine;
       Node *last = context.lastChildNode();
       bool followingEmptyLine = last && last->getType() == NodeType::EmptyLine;
 
-      if (it->kind == tokenizer::TokenKind::Indent) {
+      if (it->kind == TokenKind::Indent) {
+        // InlineCode/Paragraph
         context.column += it->value.size();
       }
 
-      if (it->kind == tokenizer::TokenKind::Prefix) {
+      if (it->kind == TokenKind::Prefix) {
         // BlockQuote/CodeBlock/InlineCode/ListItem/Heading
         auto bak = it;
-        if (parseHeadingNode(it)) continue;
+        if (parseHeading(it)) continue;
         if (parseBlockQuote(it)) continue;
+        if (parseOrderedList(it)) continue;
+        if (parseUnorderedList(it)) continue;
         it = bak;
         context.column += it->value.size();
       }
 
-      if (it->kind == tokenizer::TokenKind::Text) {
+      if (it->kind == TokenKind::Text) {
         // ListItem/Paragraph
-        // コンテキストに依存する．BlockQuoteの直後なら，そっちに内容を加える．
         auto bak = it;
-        if (parseParagraphNode(it)) continue;
+        if (parseOrderedListItem(it)) continue;
+        if (parseUnorderedListItem(it)) continue;
+        if (parseParagraph(it)) continue;
         it = bak;
       }
 
-      if (it->kind == tokenizer::TokenKind::NewLine) {
+      if (it->kind == TokenKind::NewLine) {
         context.column = 0;
         context.parent = root;
         auto prevToken = it - 1;
@@ -74,32 +71,28 @@ class Parser {
     return true;
   }
 
-  bool parseHeadingNode(std::vector<Token>::const_iterator &it) {
-    // prefix
-    if (it->kind != tokenizer::TokenKind::Prefix) return false;
+  bool parseHeading(std::vector<Token>::const_iterator &it) {
+    if (it->kind != TokenKind::Prefix) return false;
     int headingLevel = 0;
     for (char c : it->value) {
       if (c != '#') break;
       ++headingLevel;
     }
-
-    if (!headingLevel) return false;
+    if (headingLevel == 0) return false;
     ++it;
 
-    // text
-    if (it->kind != tokenizer::TokenKind::Text) return false;
-    const std::string heading = it->value;
+    if (it->kind != TokenKind::Text) return false;
+    const std::string value = it->value;
     ++it;
 
-    // eol
-    if (!consume(tokenizer::TokenKind::NewLine, it)) return false;
+    if (!consume(TokenKind::NewLine, it)) return false;
 
-    context.addNode(new HeadingNode(headingLevel, heading));
+    context.addNode(new HeadingNode(headingLevel, value));
     return true;
   }
 
   bool parseBlockQuote(std::vector<Token>::const_iterator &it) {
-    if (it->kind != tokenizer::TokenKind::Prefix) return false;
+    if (it->kind != TokenKind::Prefix) return false;
     if (it->value != "> ") return false;
     ++it;
 
@@ -114,13 +107,57 @@ class Parser {
     return true;
   }
 
-  bool parseParagraphNode(std::vector<Token>::const_iterator &it) {
+  bool parseOrderedList(std::vector<Token>::const_iterator &it) {
+    if (it->kind != TokenKind::Prefix) return false;
+    if (it->value != "1.") return false;
+    ++it;
+
+    auto lastChildNode = context.lastChildNode();
+    if (!lastChildNode || lastChildNode->type != NodeType::OrderedList) {
+      auto orderedList = new OrderedListNode();
+      context.addNode(orderedList);
+      context.parent = orderedList;
+    } else {
+      context.parent = lastChildNode;
+    }
+    return true;
+  }
+
+  bool parseOrderedListItem(std::vector<Token>::const_iterator &it) {
+    if (context.parent->type != NodeType::OrderedList) return false;
     auto text = it->value;
     ++it;
-    // while (it->kind != TokenKind::NewLine) {
-    //   // emphasis(s)/text/backquote
-    //   ++it;
-    // }
+    context.addNode(new OrderedListItemNode(text));
+    return true;
+  }
+
+  bool parseUnorderedList(std::vector<Token>::const_iterator &it) {
+    if (it->kind != TokenKind::Prefix) return false;
+    if (it->value != "+ ") return false;
+    ++it;
+
+    auto lastChildNode = context.lastChildNode();
+    if (!lastChildNode || lastChildNode->type != NodeType::UnorderedList) {
+      auto unorderedList = new UnorderedListNode();
+      context.addNode(unorderedList);
+      context.parent = unorderedList;
+    } else {
+      context.parent = lastChildNode;
+    }
+    return true;
+  }
+
+  bool parseUnorderedListItem(std::vector<Token>::const_iterator &it) {
+    if (context.parent->type != NodeType::UnorderedList) return false;
+    auto text = it->value;
+    ++it;
+    context.addNode(new UnorderedListItemNode(text));
+    return true;
+  }
+
+  bool parseParagraph(std::vector<Token>::const_iterator &it) {
+    auto text = it->value;
+    ++it;
     context.addNode(new ParagraphNode(text));
     return true;
   }
@@ -129,5 +166,4 @@ class Parser {
   ParsingContext context;
 };
 
-}  // namespace parser
 }  // namespace m2h

@@ -4,7 +4,6 @@
 #include <vector>
 
 namespace m2h {
-namespace tokenizer {
 
 enum class TokenKind {
   Prefix,  // reserved characters '+ - * # <digit>*.'
@@ -24,5 +23,4 @@ struct Token {
   const char* location;
 };
 
-}  // namespace tokenizer
 }  // namespace m2h
