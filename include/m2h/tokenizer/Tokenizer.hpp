@@ -131,7 +131,7 @@ class Tokenizer {
   bool tokenizeHorizontal(const char*& p) {
     const char* loc = p;
     int count = 0;
-    while (oneof(*p, "-*_ ")) {
+    while (oneof(*p, "-*_")) {
       ++count;
       ++p;
     }
@@ -155,10 +155,9 @@ class Tokenizer {
   bool tokenizeBlockQuote(const char*& p) {
     const char* loc = p;
     if (*p != '>') return false;
-    p += 1;
-    while (isSpace(*p)) {
-      ++p;
-    }
+    ++p;
+    if (!isSpace(*p)) return false;
+    ++p;
     tokens.emplace_back(TokenKind::Prefix, "> ", loc);
     return true;
   }

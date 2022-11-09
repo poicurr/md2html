@@ -21,41 +21,30 @@ class Parser {
 
     std::vector<Token>::const_iterator it = tokens.begin();
     while (it != tokens.end()) {
-      bool isBeginOfLine = it->kind == TokenKind::NewLine;
-      Node *last = context.lastChildNode();
-      bool followingEmptyLine = last && last->getType() == NodeType::EmptyLine;
-
       if (it->kind == TokenKind::Indent) {
-        // InlineCode/Paragraph
-        context.column += it->value.size();
+        // CodeBlock
       }
 
       if (it->kind == TokenKind::Prefix) {
         // BlockQuote/CodeBlock/InlineCode/ListItem/Heading
-        auto bak = it;
         if (parseHeading(it)) continue;
         if (parseBlockQuote(it)) continue;
         if (parseOrderedList(it)) continue;
         if (parseUnorderedList(it)) continue;
-        it = bak;
-        context.column += it->value.size();
       }
 
       if (it->kind == TokenKind::Text) {
-        // ListItem/Paragraph
-        auto bak = it;
+        // InlineCode/Emphasis/ListItem/Paragraph
         if (parseOrderedListItem(it)) continue;
         if (parseUnorderedListItem(it)) continue;
         if (parseParagraph(it)) continue;
-        it = bak;
       }
 
       if (it->kind == TokenKind::NewLine) {
-        context.column = 0;
         context.parent = root;
         auto prevToken = it - 1;
         if (prevToken->kind == TokenKind::NewLine) {
-          context.addNode(new EmptyLineNode());
+          context.append(new EmptyLineNode());
         }
       }
 
@@ -87,7 +76,7 @@ class Parser {
 
     if (!consume(TokenKind::NewLine, it)) return false;
 
-    context.addNode(new HeadingNode(headingLevel, value));
+    context.append(new HeadingNode(headingLevel, value));
     return true;
   }
 
@@ -96,13 +85,13 @@ class Parser {
     if (it->value != "> ") return false;
     ++it;
 
-    auto lastChildNode = context.lastChildNode();
-    if (!lastChildNode || lastChildNode->type != NodeType::BlockQuote) {
+    auto prevSibling = context.prevSibling();
+    if (!prevSibling || prevSibling->type != NodeType::BlockQuote) {
       auto blockquote = new BlockQuoteNode();
-      context.addNode(blockquote);
+      context.append(blockquote);
       context.parent = blockquote;
     } else {
-      context.parent = lastChildNode;
+      context.parent = prevSibling;
     }
     return true;
   }
@@ -112,13 +101,13 @@ class Parser {
     if (it->value != "1.") return false;
     ++it;
 
-    auto lastChildNode = context.lastChildNode();
-    if (!lastChildNode || lastChildNode->type != NodeType::OrderedList) {
+    auto prevSibling = context.prevSibling();
+    if (!prevSibling || prevSibling->type != NodeType::OrderedList) {
       auto orderedList = new OrderedListNode();
-      context.addNode(orderedList);
+      context.append(orderedList);
       context.parent = orderedList;
     } else {
-      context.parent = lastChildNode;
+      context.parent = prevSibling;
     }
     return true;
   }
@@ -127,7 +116,7 @@ class Parser {
     if (context.parent->type != NodeType::OrderedList) return false;
     auto text = it->value;
     ++it;
-    context.addNode(new OrderedListItemNode(text));
+    context.append(new OrderedListItemNode(text));
     return true;
   }
 
@@ -136,13 +125,13 @@ class Parser {
     if (it->value != "+ ") return false;
     ++it;
 
-    auto lastChildNode = context.lastChildNode();
-    if (!lastChildNode || lastChildNode->type != NodeType::UnorderedList) {
+    auto prevSibling = context.prevSibling();
+    if (!prevSibling || prevSibling->type != NodeType::UnorderedList) {
       auto unorderedList = new UnorderedListNode();
-      context.addNode(unorderedList);
+      context.append(unorderedList);
       context.parent = unorderedList;
     } else {
-      context.parent = lastChildNode;
+      context.parent = prevSibling;
     }
     return true;
   }
@@ -151,14 +140,14 @@ class Parser {
     if (context.parent->type != NodeType::UnorderedList) return false;
     auto text = it->value;
     ++it;
-    context.addNode(new UnorderedListItemNode(text));
+    context.append(new UnorderedListItemNode(text));
     return true;
   }
 
   bool parseParagraph(std::vector<Token>::const_iterator &it) {
     auto text = it->value;
     ++it;
-    context.addNode(new ParagraphNode(text));
+    context.append(new ParagraphNode(text));
     return true;
   }
 
