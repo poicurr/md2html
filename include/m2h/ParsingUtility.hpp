@@ -7,7 +7,9 @@
 // ------------------------------------
 inline char toLower(char c) { return 'A' <= c && c <= 'Z' ? c + 'a' - 'A' : c; }
 inline char toUpper(char c) { return 'a' <= c && c <= 'z' ? c - 'a' - 'A' : c; }
-inline bool isAlpha(char c) { return ('a' <= c && c <= 'z') || ('A' <= c && c <= 'Z'); }
+inline bool isAlpha(char c) {
+  return ('a' <= c && c <= 'z') || ('A' <= c && c <= 'Z');
+}
 inline bool isNonZeroDigit(char c) { return '1' <= c && c <= '9'; }
 inline bool isDigit(char c) { return '0' == c || isNonZeroDigit(c); }
 inline bool isCR(char c) { return c == '\r'; }
@@ -31,6 +33,25 @@ bool oneof(char p, const char* s) {
     ++s;
   }
   return false;
+}
+
+std::string escape(char c) {
+  if (c == '<') return "&lt;";
+  if (c == '>') return "&gt;";
+  if (c == '&') return "&amp;";
+  if (c == '"') return "&quot;";
+  if (c == '\'') return "&#39;";
+  if (c == ' ') return "&nbsp;";
+  std::string s;
+  return s + c;
+}
+
+std::string escape(const std::string& s) {
+  auto ret = std::string{};
+  for (auto c : s) {
+    ret += escape(c);
+  }
+  return ret;
 }
 
 template <class Predicate>

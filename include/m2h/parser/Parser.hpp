@@ -25,6 +25,11 @@ class Parser {
         // CodeBlock
       }
 
+      if (it->kind == TokenKind::BackQuote) {
+        // InlineCode
+        if (parseInlineCode(it)) continue;
+      }
+
       if (it->kind == TokenKind::Prefix) {
         // BlockQuote/CodeBlock/InlineCode/ListItem/Heading
         if (parseHeading(it)) continue;
@@ -80,8 +85,25 @@ class Parser {
     return true;
   }
 
+  bool parseInlineCode(std::vector<Token>::const_iterator &it) {
+    if (it->value != "`") return false;
+    ++it;
+
+    auto prevSibling = context.prevSibling();
+    if (prevSibling && prevSibling->type == NodeType::Paragraph) {
+      auto paragraph = static_cast<ParagraphNode *>(prevSibling);
+      // todo: escape html tags
+      paragraph->text += "<code>" + escape(it->value) + "</code>";
+    }
+    ++it;
+
+    if (it->value != "`") return false;
+    ++it;
+
+    return true;
+  }
+
   bool parseBlockQuote(std::vector<Token>::const_iterator &it) {
-    if (it->kind != TokenKind::Prefix) return false;
     if (it->value != "> ") return false;
     ++it;
 
