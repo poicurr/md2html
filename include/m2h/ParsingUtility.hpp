@@ -41,7 +41,6 @@ std::string escape(char c) {
   if (c == '&') return "&amp;";
   if (c == '"') return "&quot;";
   if (c == '\'') return "&#39;";
-  if (c == ' ') return "&nbsp;";
   std::string s;
   return s + c;
 }
@@ -64,8 +63,6 @@ int skipWhile(const char*& p, Predicate&& pred) {
   return count;
 }
 
-int skipWs(const char*& p) { return skipWhile(p, isSpace); }
-
 template <class Predicate>
 std::string readWhile(const char*& p, Predicate&& pred) {
   const char* p0 = p;
@@ -73,12 +70,10 @@ std::string readWhile(const char*& p, Predicate&& pred) {
   return {p0, p};
 }
 
-template <class Predicate>
-std::string readUntil(const char*& p, Predicate&& pred) {
-  const char* p0 = p;
-  while (!pred(*p)) ++p;
-  return {p0, p};
-}
+
+int skipWs(const char*& p) { return skipWhile(p, isSpace); }
+
+
 
 std::string trimLeft(const std::string& s) {
   auto first = s.begin(), last = s.end();

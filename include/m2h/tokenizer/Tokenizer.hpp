@@ -156,8 +156,7 @@ class Tokenizer {
     const char* loc = p;
     if (*p != '>') return false;
     ++p;
-    if (!isSpace(*p)) return false;
-    ++p;
+    while (isSpace(*p)) ++p;
     tokens.emplace_back(TokenKind::Prefix, "> ", loc);
     return true;
   }

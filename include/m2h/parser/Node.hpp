@@ -117,10 +117,10 @@ struct UnorderedListItemNode : Node {
   std::string text;
 };
 
-struct EmptyLineNode : Node {
-  EmptyLineNode() : Node(NodeType::EmptyLine) {}
+struct HorizontalNode : Node {
+  HorizontalNode() : Node(NodeType::Horizontal) {}
   virtual void print(const std::string& prefix) override {
-    std::cout << "<p><!-- empty --></p>" << std::endl;
+    std::cout << "<hr />" << std::endl;
   }
 };
 
@@ -133,6 +133,13 @@ struct CodeBlockNode : Node {
     std::cout << "</code></pre>" << std::endl;
   }
   std::vector<std::string> lines;
+};
+
+struct EmptyLineNode : Node {
+  EmptyLineNode() : Node(NodeType::EmptyLine) {}
+  virtual void print(const std::string& prefix) override {
+    std::cout << "<p><!-- empty --></p>" << std::endl;
+  }
 };
 
 }  // namespace m2h
