@@ -34,6 +34,9 @@ int main(int argc, char const* argv[]) {
       case m2h::TokenKind::Prefix:
         std::cout << "<Prefix '" << token.value << "'>";
         break;
+      case m2h::TokenKind::Horizontal:
+        std::cout << "<Horizontal>";
+        break;
       case m2h::TokenKind::BackQuote:
         std::cout << "<Backquote>";
         break;
@@ -54,6 +57,11 @@ int main(int argc, char const* argv[]) {
 
   std::cout << "[info] generated html" << std::endl;
   for (auto&& node : nodes) {
-    node->print("");
+    node->print(std::cout, "");
+  }
+
+  std::ofstream ofs("./result.html");
+  for (auto&& node : nodes) {
+    node->print(ofs, "");
   }
 }

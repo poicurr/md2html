@@ -11,143 +11,145 @@
 
 namespace m2h {
 
+using token_iterator = std::vector<Token>::iterator;
+
 class Parser {
  public:
   Parser() {}
 
-  std::vector<Node *> parse(const std::vector<Token> &tokens) {
+  std::vector<Node *> parse(std::vector<Token> &tokens) {
     Node *root = new RootNode();
     context.parent = root;
+    context.index = 0;
 
-    std::vector<Token>::const_iterator it = tokens.begin();
+    token_iterator it = tokens.begin();
     while (it != tokens.end()) {
-      if (it->kind == TokenKind::BackQuote) {
-        // InlineCode
-        auto bak = it;
-        if (parseInlineCode(it)) continue;
+      auto bak = it;
+      if (parseHeading(it)) {
+        goto next;
+      } else {
         it = bak;
       }
 
-      if (it->kind == TokenKind::Horizontal) {
-        auto bak = it;
-        if (parseHorizontal(it)) continue;
+      if (parseHorizontal(it)) {
+        goto next;
+      } else {
         it = bak;
       }
 
-      if (it->kind == TokenKind::Prefix) {
-        // BlockQuote/CodeBlock/InlineCode/ListItem/Heading
-        auto bak = it;
-        if (parseHeading(it)) continue;
-        if (parseBlockQuote(it)) continue;
-        if (parseOrderedList(it)) continue;
-        if (parseUnorderedList(it)) continue;
+      if (parseBlockQuote(it)) {
+        goto next;
+      } else {
         it = bak;
       }
 
-      if (it->kind == TokenKind::Text) {
-        // InlineCode/Emphasis/ListItem/Paragraph
-        auto bak = it;
-        if (parseOrderedListItem(it)) continue;
-        if (parseUnorderedListItem(it)) continue;
-        if (parseParagraph(it)) continue;
+      if (parseUnorderedList(root, it)) {
+        goto next;
+      } else {
         it = bak;
       }
 
-      if (it->kind == TokenKind::Indent) {
-        // CodeBlock
-        auto bak = it;
-        if (parseCodeBlock(it)) continue;
+      if (parseCodeBlock1(it)) {
+        goto next;
+      } else {
         it = bak;
       }
 
-      if (it->kind == TokenKind::NewLine) {
-        context.parent = root;
-        auto prevToken = it - 1;
-        if (prevToken->kind == TokenKind::NewLine) {
-          context.append(new EmptyLineNode());
-        }
+      if (parseCodeBlock2(it)) {
+        goto next;
+      } else {
+        it = bak;
       }
 
+      if (parseInlineCode(it)) {
+        goto next;
+      } else {
+        it = bak;
+      }
+
+      if (parseNewline(root, it)) {
+        goto next;
+      } else {
+        it = bak;
+      }
+
+      // fallback
+      parseParagraph(it);
+
+    next:
       ++it;
     }
     return root->children;
   }
 
  private:
-  bool consume(TokenKind kind, std::vector<Token>::const_iterator &it) {
-    if (kind != it->kind) return false;
-    it++;
+  bool parseParagraph(token_iterator &it) {
+    while (it->kind == TokenKind::Indent) {
+      context.index += it->value.size();
+      ++it;
+    }
+    auto prevSibling = context.prevSibling();
+    if (prevSibling && prevSibling->type == NodeType::Paragraph) {
+      auto paragraph = static_cast<ParagraphNode *>(prevSibling);
+      if (paragraph->index == context.index) {
+        paragraph->text += "\n" + it->value;
+        return true;
+      }
+    }
+    context.append(new ParagraphNode(context.index, it->value));
     return true;
   }
 
-  bool parseHeading(std::vector<Token>::const_iterator &it) {
+  bool parseHeading(token_iterator &it) {
     if (it->kind != TokenKind::Prefix) return false;
-    int headingLevel = 0;
+    int level = 0;
     for (char c : it->value) {
       if (c != '#') break;
-      ++headingLevel;
+      ++level;
     }
-    if (headingLevel == 0) return false;
+    if (level == 0) return false;
     ++it;
-
     if (it->kind != TokenKind::Text) return false;
     const std::string value = it->value;
-    ++it;
-
-    if (!consume(TokenKind::NewLine, it)) return false;
-
-    context.append(new HeadingNode(headingLevel, value));
+    context.append(new HeadingNode(level, value));
     return true;
   }
 
-  bool parseHorizontal(std::vector<Token>::const_iterator &it) {
+  bool parseHorizontal(token_iterator &it) {
     if (it->kind != TokenKind::Horizontal) return false;
-    ++it;
     context.append(new HorizontalNode());
     return true;
   }
 
-  bool parseCodeBlock(std::vector<Token>::const_iterator &it) {
-    if (it->kind != TokenKind::Indent) return false;
-    auto ws = it->value;
-    ++it;
-    if (ws.size() < 4) return false;
-    auto prevSibling = context.prevSibling();
-    if (prevSibling && prevSibling->type == NodeType::CodeBlock) {
-      auto codeblock = static_cast<CodeBlockNode *>(prevSibling);
-      codeblock->lines.push_back(escape(it->value));
-      context.parent = codeblock;
-    } else {
-      auto codeblock = new CodeBlockNode(escape(it->value));
-      context.append(codeblock);
-      context.parent = codeblock;
+  bool parseNewline(Node *root, token_iterator &it) {
+    if (it->kind != TokenKind::NewLine) return false;
+    auto prevToken = it - 1;
+    if (prevToken->value == "> ") {
+      context.append(new EmptyLineNode());
     }
-    ++it;
+    if (prevToken->kind == TokenKind::NewLine) {
+      context.append(new EmptyLineNode());
+    }
+    context.parent = root;
+    context.index = 0;
     return true;
   }
 
-  bool parseInlineCode(std::vector<Token>::const_iterator &it) {
+  bool parseInlineCode(token_iterator &it) {
     if (it->value != "`") return false;
     ++it;
-
     auto prevSibling = context.prevSibling();
     if (prevSibling && prevSibling->type == NodeType::Paragraph) {
       auto paragraph = static_cast<ParagraphNode *>(prevSibling);
-      // todo: escape html tags
       paragraph->text += "<code>" + escape(it->value) + "</code>";
     }
     ++it;
-
     if (it->value != "`") return false;
-    ++it;
-
     return true;
   }
 
-  bool parseBlockQuote(std::vector<Token>::const_iterator &it) {
+  bool parseBlockQuote(token_iterator &it) {
     if (it->value != "> ") return false;
-    ++it;
-
     auto prevSibling = context.prevSibling();
     if (prevSibling && prevSibling->type == NodeType::BlockQuote) {
       context.parent = prevSibling;
@@ -159,59 +161,82 @@ class Parser {
     return true;
   }
 
-  bool parseOrderedList(std::vector<Token>::const_iterator &it) {
-    if (it->kind != TokenKind::Prefix) return false;
-    if (it->value != "1.") return false;
+  bool parseCodeBlock1(token_iterator &it) {
+    if (it->kind != TokenKind::Indent) return false;
     ++it;
+
+    auto code = std::string{};
+    while (it->kind != TokenKind::NewLine) {
+      code += it->value;
+      ++it;
+    }
 
     auto prevSibling = context.prevSibling();
-    if (prevSibling && prevSibling->type == NodeType::OrderedList) {
-      context.parent = prevSibling;
+    if (prevSibling && prevSibling->type == NodeType::CodeBlock) {
+      auto codeblock = static_cast<CodeBlockNode *>(prevSibling);
+      codeblock->text += "\n" + escape(code);
     } else {
-      auto orderedList = new OrderedListNode();
-      context.append(orderedList);
-      context.parent = orderedList;
+      context.append(new CodeBlockNode(escape(code)));
     }
+
     return true;
   }
 
-  bool parseOrderedListItem(std::vector<Token>::const_iterator &it) {
-    if (context.parent->type != NodeType::OrderedList) return false;
-    auto text = it->value;
-    ++it;
-    context.append(new OrderedListItemNode(text));
+  bool parseCodeBlock2(token_iterator &it) {
+    for (int i = 0; i < 3; ++i) {
+      if (it->kind != TokenKind::BackQuote) return false;
+      ++it;
+    }
+
+    auto code = std::string{};
+    while (it->kind != TokenKind::BackQuote) {
+      if (it->kind == TokenKind::NewLine) code += "\n";
+      code += it->value;
+      ++it;
+    }
+
+    for (int i = 0; i < 3; ++i) {
+      if (it->kind != TokenKind::BackQuote) return false;
+      ++it;
+    }
+
+    context.append(new CodeBlockNode(escape(code)));
     return true;
   }
 
-  bool parseUnorderedList(std::vector<Token>::const_iterator &it) {
-    if (it->kind != TokenKind::Prefix) return false;
+  bool parseUnorderedList(Node *root, token_iterator &it) {
+    while (it->kind == TokenKind::Indent) {
+      context.index += it->value.size();
+      ++it;
+    }
+
     if (it->value != "+ ") return false;
+    context.index += it->value.size();
     ++it;
 
+    // ul
     auto prevSibling = context.prevSibling();
     if (prevSibling && prevSibling->type == NodeType::UnorderedList) {
       context.parent = prevSibling;
+      auto prevlist = static_cast<UnorderedListNode *>(prevSibling);
+      if (prevlist->depth < context.index) {
+        auto unorderedlist = new UnorderedListNode(context.index);
+        context.append(unorderedlist);
+        context.parent = unorderedlist;
+      }
     } else {
-      auto unorderedList = new UnorderedListNode();
-      context.append(unorderedList);
-      context.parent = unorderedList;
+      auto unorderedlist = new UnorderedListNode(context.index);
+      context.append(unorderedlist);
+      context.parent = unorderedlist;
     }
 
-    return true;
-  }
+    // li
+    while (it->kind == TokenKind::Indent) {
+      context.index += it->value.size();
+      ++it;
+    }
+    context.append(new UnorderedListItemNode(it->value));
 
-  bool parseUnorderedListItem(std::vector<Token>::const_iterator &it) {
-    if (context.parent->type != NodeType::UnorderedList) return false;
-    auto text = it->value;
-    ++it;
-    context.append(new UnorderedListItemNode(text));
-    return true;
-  }
-
-  bool parseParagraph(std::vector<Token>::const_iterator &it) {
-    auto text = it->value;
-    ++it;
-    context.append(new ParagraphNode(text));
     return true;
   }
 

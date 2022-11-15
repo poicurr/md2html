@@ -109,6 +109,7 @@ class Tokenizer {
     while (isSpace(*p)) {
       ++count;
       ++p;
+      if (count >= 4) break;
     }
     if (count == 0) return false;
     tokens.emplace_back(TokenKind::Indent, std::string(count, ' '), loc);
@@ -136,10 +137,10 @@ class Tokenizer {
       ++p;
     }
 
+    if (count < 3) return false;
     if (!isCrlf(*p)) return false;
     ++p;
 
-    if (count < 3) return false;
     tokens.emplace_back(TokenKind::Horizontal, "", loc);
     return true;
   }
@@ -156,7 +157,7 @@ class Tokenizer {
     const char* loc = p;
     if (*p != '>') return false;
     ++p;
-    while (isSpace(*p)) ++p;
+    if (isSpace(*p)) ++p;
     tokens.emplace_back(TokenKind::Prefix, "> ", loc);
     return true;
   }
@@ -164,7 +165,7 @@ class Tokenizer {
   bool tokenizeText(const char*& p) {
     const char* p1 = p;
     while (!isCrlf(*p)) {
-      while (!oneof(*p, "*_`") && !isCrlf(*p)) ++p;
+      while (!oneof(*p, "*`") && !isCrlf(*p)) ++p;
       auto text = std::string{p1, p};
       if (!text.empty()) {
         tokens.emplace_back(TokenKind::Text, text, p1);
@@ -172,7 +173,7 @@ class Tokenizer {
         continue;
       }
       if (isCrlf(*p)) return true;
-      if (oneof(*p, "*_")) {
+      if (oneof(*p, "*")) {
         tokens.emplace_back(TokenKind::Emphasis, "*", p1);
         p1 = ++p;
         continue;
@@ -210,7 +211,7 @@ class Tokenizer {
     int count = skipWhile(p, isDigit);
     if (*p != '.') return false;
     ++p;
-    tokens.emplace_back(TokenKind::Prefix, "1.", loc);
+    tokens.emplace_back(TokenKind::Prefix, std::string("1", count) + ".", loc);
     return true;
   }
 
