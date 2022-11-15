@@ -53,10 +53,7 @@
 </ul>
 <p><!-- empty --></p>
 <p><!-- empty --></p>
-<p>*
-*
-Note:
-*
+<p>*<em>Note:</em><em> This document is itself written using Markdown; you</em>
 *
  This document is itself written using Markdown; you
 can [see the source for it by adding '.text' to the URL](/projects/markdown/syntax.text).</p>
@@ -92,10 +89,7 @@ Type's "Convert Line Breaks" option) which translate every line break
 character in a paragraph into a <code>&lt;br /&gt;</code>
  tag.</p>
 <p><!-- empty --></p>
-<p>When you 
-*
-do
-*
+<p>When you <em>do</em>
  want to insert a <code>&lt;br /&gt;</code>
  break tag using Markdown, you
 end a line with two or more spaces, then type return.</p>
@@ -164,17 +158,11 @@ and code blocks:</p>
 <blockquote>
   <h2>This is a header.</h2>
   <p><!-- empty --></p>
-  <p>1.</p>
-<pre><code>This is the first list item.
-</code></pre>
-  <blockquote>
-    <p>1.</p>
-<pre><code>This is the second list item.
-</code></pre>
-    <blockquote>
-      <p><!-- empty --></p>
-    </blockquote>
-  </blockquote>
+  <ol>
+    <li>This is the first list item.</li>
+    <li>This is the second list item.</li>
+  </ol>
+  <p><!-- empty --></p>
   <p>Here's some example code:</p>
   <p><!-- empty --></p>
 <pre><code>return shell_exec(&quot;echo $input | $markdown_script&quot;);
@@ -217,15 +205,11 @@ Quote Level from the Text menu.</p>
 <p><!-- empty --></p>
 <p>Ordered lists use numbers followed by periods:</p>
 <p><!-- empty --></p>
-<p>1.</p>
-<pre><code>Bird
-</code></pre>
-<p>1.</p>
-<pre><code>McHale
-</code></pre>
-<p>1.</p>
-<pre><code>Parish
-</code></pre>
+<ol>
+  <li>Bird</li>
+  <li>McHale</li>
+  <li>Parish</li>
+</ol>
 <p><!-- empty --></p>
 <p>It's important to note that the actual numbers you use to mark the
 list have no effect on the HTML output Markdown produces. The HTML
@@ -233,27 +217,19 @@ Markdown produces from the above list is:</p>
 <p><!-- empty --></p>
 <p>If you instead wrote the list in Markdown like this:</p>
 <p><!-- empty --></p>
-<p>1.</p>
-<pre><code>Bird
-</code></pre>
-<p>1.</p>
-<pre><code>McHale
-</code></pre>
-<p>1.</p>
-<pre><code>Parish
-</code></pre>
+<ol>
+  <li>Bird</li>
+  <li>McHale</li>
+  <li>Parish</li>
+</ol>
 <p><!-- empty --></p>
 <p>or even:</p>
 <p><!-- empty --></p>
-<p>1.</p>
-<pre><code>Bird
-</code></pre>
-<p>1.</p>
-<pre><code>McHale
-</code></pre>
-<p>1.</p>
-<pre><code>Parish
-</code></pre>
+<ol>
+  <li>Bird</li>
+  <li>McHale</li>
+  <li>Parish</li>
+</ol>
 <p><!-- empty --></p>
 <p>you'd get the exact same HTML output. The point is, if you want to,
 you can use ordinal numbers in your ordered Markdown lists, so that
@@ -290,9 +266,10 @@ viverra nec, fringilla in, laoreet vitae, risus.</p>
 paragraph in a list item must be indented by either 4 spaces
 or one tab:</p>
 <p><!-- empty --></p>
-<p>1.</p>
-<pre><code>This is a list item with two paragraphs. Lorem ipsum dolor
-sit amet, consectetuer adipiscing elit. Aliquam hendrerit
+<ol>
+  <li>This is a list item with two paragraphs. Lorem ipsum dolor</li>
+</ol>
+<pre><code>sit amet, consectetuer adipiscing elit. Aliquam hendrerit
 mi posuere lectus.
 </code></pre>
 <p><!-- empty --></p>
@@ -301,9 +278,9 @@ vitae, risus. Donec sit amet nisl. Aliquam semper ipsum
 sit amet velit.
 </code></pre>
 <p><!-- empty --></p>
-<p>1.</p>
-<pre><code>Suspendisse id sem consectetuer libero luctus adipiscing.
-</code></pre>
+<ol>
+  <li>Suspendisse id sem consectetuer libero luctus adipiscing.</li>
+</ol>
 <p><!-- empty --></p>
 <p>It looks nice if you indent every line of the subsequent
 paragraphs, but here again, Markdown will allow you to be
@@ -334,10 +311,7 @@ delimiters need to be indented:</p>
 </code></pre>
 <p><!-- empty --></p>
 <p>To put a code block within a list item, the code block needs
-to be indented 
-*
-twice
-*
+to be indented <em>twice</em>
  -- 8 spaces or two tabs:</p>
 <p><!-- empty --></p>
 <ul>
@@ -403,24 +377,15 @@ end tell
 <p><!-- empty --></p>
 <h3>Links</h3>
 <p><!-- empty --></p>
-<p>Markdown supports two style of links: 
-*
-inline
-*
- and 
-*
-reference
-*
+<p>Markdown supports two style of links: <em>inline</em>
+ and <em>reference</em>
 .</p>
 <p><!-- empty --></p>
 <p>In both styles, the link text is delimited by [square brackets].</p>
 <p><!-- empty --></p>
 <p>To create an inline link, use a set of regular parentheses immediately
 after the link text's closing square bracket. Inside the parentheses,
-put the URL where you want the link to point, along with an 
-*
-optional
-*
+put the URL where you want the link to point, along with an <em>optional</em>
 title for the link, surrounded in quotes. For example:</p>
 <p><!-- empty --></p>
 <p>This is [an example](http://example.com/) inline link.</p>
@@ -441,16 +406,10 @@ HTML <code>&lt;em&gt;</code>
 's will be wrapped with an HTML<code>&lt;strong&gt;</code>
  tag. E.g., this input:</p>
 <p><!-- empty --></p>
-<p>*
-single asterisks
-*</p>
 <p><!-- empty --></p>
 <p>_single underscores_</p>
 <p><!-- empty --></p>
-<p>*
-*
-double asterisks
-*
+<p>*<em>double asterisks</em><em></em>
 *</p>
 <p><!-- empty --></p>
 <p>__double underscores__</p>

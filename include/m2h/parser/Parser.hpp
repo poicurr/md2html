@@ -43,6 +43,12 @@ class Parser {
         it = bak;
       }
 
+      if (parseOrderedList(it)) {
+        goto next;
+      } else {
+        it = bak;
+      }
+
       if (parseUnorderedList(root, it)) {
         goto next;
       } else {
@@ -62,6 +68,12 @@ class Parser {
       }
 
       if (parseInlineCode(it)) {
+        goto next;
+      } else {
+        it = bak;
+      }
+
+      if (parseEmphasis(it)) {
         goto next;
       } else {
         it = bak;
@@ -148,6 +160,19 @@ class Parser {
     return true;
   }
 
+  bool parseEmphasis(token_iterator &it) {
+    if (it->kind != TokenKind::Emphasis) return false;
+    ++it;
+    auto prevSibling = context.prevSibling();
+    if (prevSibling && prevSibling->type == NodeType::Paragraph) {
+      auto paragraph = static_cast<ParagraphNode *>(prevSibling);
+      paragraph->text += "<em>" + it->value + "</em>";
+    }
+    ++it;
+    if (it->kind != TokenKind::Emphasis) return false;
+    return true;
+  }
+
   bool parseBlockQuote(token_iterator &it) {
     if (it->value != "> ") return false;
     auto prevSibling = context.prevSibling();
@@ -219,7 +244,7 @@ class Parser {
     if (prevSibling && prevSibling->type == NodeType::UnorderedList) {
       context.parent = prevSibling;
       auto prevlist = static_cast<UnorderedListNode *>(prevSibling);
-      if (prevlist->depth < context.index) {
+      if (prevlist->index < context.index) {
         auto unorderedlist = new UnorderedListNode(context.index);
         context.append(unorderedlist);
         context.parent = unorderedlist;
@@ -236,6 +261,41 @@ class Parser {
       ++it;
     }
     context.append(new UnorderedListItemNode(it->value));
+
+    return true;
+  }
+
+  bool parseOrderedList(token_iterator &it) {
+    while (it->kind == TokenKind::Indent) {
+      context.index += it->value.size();
+      ++it;
+    }
+    if (it->kind != TokenKind::Prefix) return false;
+    if (it->value[0] != '1') return false;
+    context.index += it->value.size();
+    ++it;
+
+    while (it->kind == TokenKind::Indent) {
+      context.index += it->value.size();
+      ++it;
+    }
+
+    // ol
+    auto prevSibling = context.prevSibling();
+    if (prevSibling && prevSibling->type == NodeType::OrderedList) {
+      context.parent = prevSibling;
+    } else {
+      auto orderedlist = new OrderedListNode(context.index);
+      context.append(orderedlist);
+      context.parent = orderedlist;
+    }
+
+    // li
+    while (it->kind == TokenKind::Indent) {
+      context.index += it->value.size();
+      ++it;
+    }
+    context.append(new OrderedListItemNode(it->value));
 
     return true;
   }

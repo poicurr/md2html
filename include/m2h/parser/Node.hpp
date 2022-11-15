@@ -79,7 +79,7 @@ struct ParagraphNode : Node {
 };
 
 struct OrderedListNode : Node {
-  OrderedListNode() : Node(NodeType::OrderedList) {}
+  OrderedListNode(int index) : Node(NodeType::OrderedList), index{index} {}
   virtual void print(std::ostream& ost, const std::string& prefix) override {
     ost << prefix << "<ol>" << std::endl;
     for (auto&& childNode : children) {
@@ -87,6 +87,7 @@ struct OrderedListNode : Node {
     }
     ost << prefix << "</ol>" << std::endl;
   }
+  int index;
 };
 
 struct OrderedListItemNode : Node {
@@ -99,7 +100,7 @@ struct OrderedListItemNode : Node {
 };
 
 struct UnorderedListNode : Node {
-  UnorderedListNode(int depth) : Node(NodeType::UnorderedList), depth{depth} {}
+  UnorderedListNode(int index) : Node(NodeType::UnorderedList), index{index} {}
   virtual void print(std::ostream& ost, const std::string& prefix) override {
     ost << prefix << "<ul>" << std::endl;
     for (auto&& childNode : children) {
@@ -107,7 +108,7 @@ struct UnorderedListNode : Node {
     }
     ost << prefix << "</ul>" << std::endl;
   }
-  int depth;
+  int index;
 };
 
 struct UnorderedListItemNode : Node {
