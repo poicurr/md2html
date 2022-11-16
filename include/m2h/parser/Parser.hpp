@@ -172,8 +172,7 @@ class Parser {
     auto text = std::string{};
     if (c1 == 1) text = "<em>" + it->value + "</em>";
     if (c1 == 2) text = "<strong>" + it->value + "</strong>";
-    if (c1 >= 3) text = "<em><strong>" + it->value + "</strong></em>";
-    context.append(new ParagraphNode(context.index, text));
+    if (c1 == 3) text = "<em><strong>" + it->value + "</strong></em>";
     ++it;
 
     int c2 = 0;
@@ -181,7 +180,18 @@ class Parser {
       ++c2;
       ++it;
     }
+    --it;
     if (c1 != c2) return false;
+
+    auto prevSibling = context.prevSibling();
+    if (prevSibling && prevSibling->type == NodeType::Paragraph) {
+      auto prevPara = static_cast<ParagraphNode *>(prevSibling);
+      if (prevPara->index == context.index) {
+        prevPara->text += text;
+      }
+    } else {
+      context.append(new ParagraphNode(context.index, text));
+    }
 
     return true;
   }
