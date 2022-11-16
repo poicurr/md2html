@@ -161,15 +161,28 @@ class Parser {
   }
 
   bool parseEmphasis(token_iterator &it) {
-    if (it->kind != TokenKind::Emphasis) return false;
-    ++it;
-    auto prevSibling = context.prevSibling();
-    if (prevSibling && prevSibling->type == NodeType::Paragraph) {
-      auto paragraph = static_cast<ParagraphNode *>(prevSibling);
-      paragraph->text += "<em>" + it->value + "</em>";
+    int c1 = 0;
+    while (it->kind == TokenKind::Emphasis) {
+      ++c1;
+      ++it;
     }
+    if (c1 == 0) return false;
+
+    if (it->kind != TokenKind::Text) return false;
+    auto text = std::string{};
+    if (c1 == 1) text = "<em>" + it->value + "</em>";
+    if (c1 == 2) text = "<strong>" + it->value + "</strong>";
+    if (c1 >= 3) text = "<em><strong>" + it->value + "</strong></em>";
+    context.append(new ParagraphNode(context.index, text));
     ++it;
-    if (it->kind != TokenKind::Emphasis) return false;
+
+    int c2 = 0;
+    while (it->kind == TokenKind::Emphasis) {
+      ++c2;
+      ++it;
+    }
+    if (c1 != c2) return false;
+
     return true;
   }
 
