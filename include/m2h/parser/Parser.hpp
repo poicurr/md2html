@@ -68,7 +68,14 @@ class Parser {
       }
 
       // inline
-      if (parseInlineCode(it)) {
+      if (parseInlineCode1(it)) {
+        goto next;
+      } else {
+        it = bak;
+      }
+
+      // inline
+      if (parseInlineCode2(it)) {
         goto next;
       } else {
         it = bak;
@@ -80,8 +87,6 @@ class Parser {
       } else {
         it = bak;
       }
-
-
 
       // inline
       if (parseEmphasis(it)) {
@@ -158,16 +163,47 @@ class Parser {
     return true;
   }
 
-  bool parseInlineCode(token_iterator &it) {
-    if (it->value != "`") return false;
-    ++it;
+  bool parseInlineCode1(token_iterator &it) {
+    for (int i = 0; i < 2; ++i, ++it)
+      if (it->kind != TokenKind::BackQuote) return false;
+
+    auto code = std::string{};
+    while (it->kind != TokenKind::BackQuote ||
+           (it + 1)->kind != TokenKind::BackQuote) {
+      code += it->value;
+      ++it;
+    }
+
+    for (int i = 0; i < 2; ++i, ++it)
+      if (it->kind != TokenKind::BackQuote) return false;
+    --it;
+
     auto prevSibling = context.prevSibling();
     if (prevSibling && prevSibling->type == NodeType::Paragraph) {
       auto paragraph = static_cast<ParagraphNode *>(prevSibling);
-      paragraph->text += "<code>" + escape(it->value) + "</code>";
+      paragraph->text += "<code>" + escape(code) + "</code>";
     }
-    ++it;
+
+    return true;
+  }
+
+  bool parseInlineCode2(token_iterator &it) {
     if (it->value != "`") return false;
+    ++it;
+
+    auto code = std::string{};
+    while (it->kind != TokenKind::BackQuote) {
+      code += it->value;
+      ++it;
+    }
+
+    if (it->value != "`") return false;
+
+    auto prevSibling = context.prevSibling();
+    if (prevSibling && prevSibling->type == NodeType::Paragraph) {
+      auto paragraph = static_cast<ParagraphNode *>(prevSibling);
+      paragraph->text += "<code>" + escape(code) + "</code>";
+    }
     return true;
   }
 
