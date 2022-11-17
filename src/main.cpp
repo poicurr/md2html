@@ -67,6 +67,7 @@ int main(int argc, char const* argv[]) {
   }
 
   std::ofstream ofs("./result.html");
+  ofs << "<link rel=\"stylesheet\" href=\"./resources/style.css\" />" << std::endl;
   for (auto&& node : nodes) {
     node->print(ofs, "");
   }
