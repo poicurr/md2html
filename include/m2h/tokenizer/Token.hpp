@@ -13,6 +13,7 @@ enum class TokenKind {
   Horizontal,
   NewLine,
   BackQuote,  // `
+  Bracket,  // []()
 };
 
 struct Token {

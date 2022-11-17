@@ -21,6 +21,7 @@ enum class NodeType {
   Horizontal,
   Heading,
   InlineCode,
+  Link,
   CodeBlock,
 };
 

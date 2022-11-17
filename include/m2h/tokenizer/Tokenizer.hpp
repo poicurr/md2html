@@ -47,6 +47,17 @@ class Tokenizer {
         continue;
       }
 
+      if (oneof(*p, "[]()")) {
+        // brackets
+        context.savepoint = p;
+        bool ok = tokenizeBracket(p);
+        if (!ok) {
+          p = context.savepoint;
+          goto fallback;
+        }
+        continue;
+      }
+
       if (isDigit(*p)) {
         // OrderedListItems
         context.savepoint = p;
@@ -162,10 +173,18 @@ class Tokenizer {
     return true;
   }
 
+  bool tokenizeBracket(const char*& p) {
+    const char* loc = p;
+    if (!oneof(*p, "[]()")) return false;
+    tokens.emplace_back(TokenKind::Bracket, std::string{*p}, loc);
+    ++p;
+    return true;
+  }
+
   bool tokenizeText(const char*& p) {
     const char* p1 = p;
     while (!isCrlf(*p)) {
-      while (!oneof(*p, "*`") && !isCrlf(*p)) ++p;
+      while (!oneof(*p, "*`[]()") && !isCrlf(*p)) ++p;
       auto text = std::string{p1, p};
       if (!text.empty()) {
         tokens.emplace_back(TokenKind::Text, text, p1);
@@ -180,6 +199,11 @@ class Tokenizer {
       }
       if (*p == '`') {
         tokens.emplace_back(TokenKind::BackQuote, "`", p1);
+        p1 = ++p;
+        continue;
+      }
+      if (oneof(*p, "[]()")) {
+        tokens.emplace_back(TokenKind::Bracket, std::string{*p}, p1);
         p1 = ++p;
         continue;
       }

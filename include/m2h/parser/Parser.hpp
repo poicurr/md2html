@@ -67,12 +67,23 @@ class Parser {
         it = bak;
       }
 
+      // inline
       if (parseInlineCode(it)) {
         goto next;
       } else {
         it = bak;
       }
 
+      // inline
+      if (parseLink(it)) {
+        goto next;
+      } else {
+        it = bak;
+      }
+
+
+
+      // inline
       if (parseEmphasis(it)) {
         goto next;
       } else {
@@ -160,6 +171,43 @@ class Parser {
     return true;
   }
 
+  bool parseLink(token_iterator &it) {
+    if (it->kind != TokenKind::Bracket) return false;
+    if (it->value != "[") return false;
+    ++it;
+
+    if (it->kind != TokenKind::Text) return false;
+    auto text = it->value;
+    ++it;
+
+    if (it->kind != TokenKind::Bracket) return false;
+    if (it->value != "]") return false;
+    ++it;
+
+    if (it->kind != TokenKind::Bracket) return false;
+    if (it->value != "(") return false;
+    ++it;
+
+    if (it->kind != TokenKind::Text) return false;
+    auto url = it->value;
+    ++it;
+
+    if (it->kind != TokenKind::Bracket) return false;
+    if (it->value != ")") return false;
+
+    auto link = "<a href=\"" + url + "\">" + text + "</a>";
+
+    auto prevSibling = context.prevSibling();
+    if (prevSibling && prevSibling->type == NodeType::Paragraph) {
+      auto paragraph = static_cast<ParagraphNode *>(prevSibling);
+      paragraph->text += link;
+    } else {
+      context.append(new ParagraphNode(context.index, link));
+    }
+
+    return true;
+  }
+
   bool parseEmphasis(token_iterator &it) {
     int c1 = 0;
     while (it->kind == TokenKind::Emphasis) {
@@ -172,16 +220,12 @@ class Parser {
     auto text = std::string{};
     if (c1 == 1) text = "<em>" + it->value + "</em>";
     if (c1 == 2) text = "<strong>" + it->value + "</strong>";
-    if (c1 == 3) text = "<em><strong>" + it->value + "</strong></em>";
+    if (c1 >= 3) text = "<em><strong>" + it->value + "</strong></em>";
     ++it;
 
-    int c2 = 0;
-    while (it->kind == TokenKind::Emphasis) {
-      ++c2;
-      ++it;
-    }
+    for (int i = 0; i < c1; ++i, ++it)
+      if (it->kind != TokenKind::Emphasis) return false;
     --it;
-    if (c1 != c2) return false;
 
     auto prevSibling = context.prevSibling();
     if (prevSibling && prevSibling->type == NodeType::Paragraph) {
@@ -238,8 +282,10 @@ class Parser {
 
     auto code = std::string{};
     while (it->kind != TokenKind::BackQuote) {
-      if (it->kind == TokenKind::NewLine) code += "\n";
-      code += it->value;
+      if (it->kind == TokenKind::NewLine)
+        code += "\n";
+      else
+        code += it->value;
       ++it;
     }
 
@@ -279,11 +325,17 @@ class Parser {
     }
 
     // li
+    auto value = std::string{};
     while (it->kind == TokenKind::Indent) {
       context.index += it->value.size();
       ++it;
     }
-    context.append(new UnorderedListItemNode(it->value));
+    while (it->kind != TokenKind::NewLine) {
+      value += it->value;
+      ++it;
+    }
+    --it;
+    context.append(new UnorderedListItemNode(value));
 
     return true;
   }

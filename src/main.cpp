@@ -40,6 +40,9 @@ int main(int argc, char const* argv[]) {
       case m2h::TokenKind::BackQuote:
         std::cout << "<Backquote>";
         break;
+      case m2h::TokenKind::Bracket:
+        std::cout << "<Bracket '" << token.value << "'>";
+        break;
       case m2h::TokenKind::Emphasis:
         std::cout << "<Emphasis>";
         break;
