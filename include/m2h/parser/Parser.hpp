@@ -1,5 +1,6 @@
 #pragma once
 
+#include <algorithm>
 #include <iostream>
 #include <list>
 #include <string>
@@ -21,10 +22,18 @@ class Parser {
     Node *root = new RootNode();
     context.parent = root;
     context.index = 0;
+    context.indent = 0;
 
     token_iterator it = tokens.begin();
     while (it != tokens.end()) {
       auto bak = it;
+
+      if (parseIndent(it)) {
+        goto next;
+      } else {
+        it = bak;
+      }
+
       if (parseHeading(it)) {
         goto next;
       } else {
@@ -112,10 +121,6 @@ class Parser {
 
  private:
   bool parseParagraph(token_iterator &it) {
-    while (it->kind == TokenKind::Indent) {
-      context.index += it->value.size();
-      ++it;
-    }
     auto prevSibling = context.prevSibling();
     if (prevSibling && prevSibling->type == NodeType::Paragraph) {
       auto paragraph = static_cast<ParagraphNode *>(prevSibling);
@@ -143,6 +148,13 @@ class Parser {
     return true;
   }
 
+  bool parseIndent(token_iterator &it) {
+    if (it->kind != TokenKind::Indent) return false;
+    context.index += it->value.size();
+    context.indent += it->value.size();
+    return true;
+  }
+
   bool parseHorizontal(token_iterator &it) {
     if (it->kind != TokenKind::Horizontal) return false;
     context.append(new HorizontalNode());
@@ -160,6 +172,7 @@ class Parser {
     }
     context.parent = root;
     context.index = 0;
+    context.indent = 0;
     return true;
   }
 
@@ -278,6 +291,8 @@ class Parser {
 
   bool parseBlockQuote(token_iterator &it) {
     if (it->value != "> ") return false;
+    context.indent = 0;
+
     auto prevSibling = context.prevSibling();
     if (prevSibling && prevSibling->type == NodeType::BlockQuote) {
       context.parent = prevSibling;
@@ -290,14 +305,15 @@ class Parser {
   }
 
   bool parseCodeBlock1(token_iterator &it) {
-    if (it->kind != TokenKind::Indent) return false;
-    ++it;
+    if (context.indent < 4) return false;
 
     auto code = std::string{};
     while (it->kind != TokenKind::NewLine) {
       code += it->value;
       ++it;
     }
+    context.index = 0;
+    context.indent = 0;
 
     auto prevSibling = context.prevSibling();
     if (prevSibling && prevSibling->type == NodeType::CodeBlock) {
@@ -335,21 +351,36 @@ class Parser {
   }
 
   bool parseUnorderedList(Node *root, token_iterator &it) {
-    while (it->kind == TokenKind::Indent) {
-      context.index += it->value.size();
-      ++it;
-    }
-
+    if (it->kind != TokenKind::Prefix) return false;
     if (it->value != "+ ") return false;
     context.index += it->value.size();
-    ++it;
+    context.indent = 0;
 
     // ul
-    auto prevSibling = context.prevSibling();
-    if (prevSibling && prevSibling->type == NodeType::UnorderedList) {
-      context.parent = prevSibling;
-      auto prevlist = static_cast<UnorderedListNode *>(prevSibling);
-      if (prevlist->index < context.index) {
+    auto nodes = root->children;
+    std::reverse(nodes.begin(), nodes.end());
+    UnorderedListNode *prevlist = nullptr;
+    for (auto node : nodes) {
+      if (node->type == NodeType::UnorderedList) {
+        prevlist = static_cast<UnorderedListNode *>(node);
+        break;
+      }
+    }
+
+    int depth = context.index / 4;
+    if (prevlist && depth != 0) {
+      for (int i = 0; i < depth; ++i) {
+        auto nodes = prevlist->children;
+        std::reverse(nodes.begin(), nodes.end());
+        for (auto node : nodes) {
+          if (node->type == NodeType::UnorderedList) {
+            prevlist = static_cast<UnorderedListNode *>(node);
+            break;
+          }
+        }
+      }
+      context.parent = prevlist;
+      if (depth > prevlist->index / 4) {
         auto unorderedlist = new UnorderedListNode(context.index);
         context.append(unorderedlist);
         context.parent = unorderedlist;
@@ -361,33 +392,23 @@ class Parser {
     }
 
     // li
-    auto value = std::string{};
-    while (it->kind == TokenKind::Indent) {
-      context.index += it->value.size();
-      ++it;
-    }
-    while (it->kind != TokenKind::NewLine) {
-      value += it->value;
-      ++it;
-    }
-    --it;
-    context.append(new UnorderedListItemNode(value));
+    auto item = new UnorderedListItemNode();
+    context.append(item);
+    context.parent = item;
 
     return true;
   }
 
   bool parseOrderedList(token_iterator &it) {
-    while (it->kind == TokenKind::Indent) {
-      context.index += it->value.size();
-      ++it;
-    }
     if (it->kind != TokenKind::Prefix) return false;
     if (it->value[0] != '1') return false;
     context.index += it->value.size();
+    context.indent = 0;
     ++it;
 
     while (it->kind == TokenKind::Indent) {
       context.index += it->value.size();
+      context.indent += it->value.size();
       ++it;
     }
 

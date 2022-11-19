@@ -21,7 +21,6 @@ enum class NodeType {
   Horizontal,
   Heading,
   InlineCode,
-  Link,
   CodeBlock,
 };
 
@@ -113,12 +112,12 @@ struct UnorderedListNode : Node {
 };
 
 struct UnorderedListItemNode : Node {
-  UnorderedListItemNode(const std::string& text)
-      : Node(NodeType::UnorderedListItem), text{text} {}
+  UnorderedListItemNode() : Node(NodeType::UnorderedListItem) {}
   virtual void print(std::ostream& ost, const std::string& prefix) override {
-    ost << prefix << "<li>" << text << "</li>" << std::endl;
+    ost << prefix << "<li>" << std::endl;
+    if (!children.empty()) children[0]->print(ost, prefix + "  ");
+    ost << prefix << "</li>" << std::endl;
   }
-  std::string text;
 };
 
 struct HorizontalNode : Node {

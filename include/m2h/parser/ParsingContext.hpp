@@ -7,6 +7,7 @@ namespace m2h {
 struct ParsingContext {
   Node *parent;
   int index;
+  int indent;
 
   Node *prevSibling() {
     auto children = parent->children;
