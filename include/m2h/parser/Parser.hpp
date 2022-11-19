@@ -34,18 +34,6 @@ class Parser {
         it = bak;
       }
 
-      if (parseHeading(it)) {
-        goto next;
-      } else {
-        it = bak;
-      }
-
-      if (parseHorizontal(it)) {
-        goto next;
-      } else {
-        it = bak;
-      }
-
       if (parseBlockQuote(it)) {
         goto next;
       } else {
@@ -99,6 +87,18 @@ class Parser {
 
       // inline
       if (parseEmphasis(it)) {
+        goto next;
+      } else {
+        it = bak;
+      }
+
+      if (parseHeading(it)) {
+        goto next;
+      } else {
+        it = bak;
+      }
+
+      if (parseHorizontal(it)) {
         goto next;
       } else {
         it = bak;
@@ -312,6 +312,7 @@ class Parser {
       code += it->value;
       ++it;
     }
+    --it;
     context.index = 0;
     context.indent = 0;
 
@@ -345,6 +346,7 @@ class Parser {
       if (it->kind != TokenKind::BackQuote) return false;
       ++it;
     }
+    --it;
 
     context.append(new CodeBlockNode(escape(code)));
     return true;
