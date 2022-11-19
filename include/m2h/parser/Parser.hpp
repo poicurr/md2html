@@ -1,6 +1,7 @@
 #pragma once
 
 #include <algorithm>
+#include <cassert>
 #include <iostream>
 #include <list>
 #include <string>
@@ -359,8 +360,15 @@ class Parser {
     context.indent = 0;
 
     // ul
-    UnorderedListNode *prevlist =
-        static_cast<UnorderedListNode *>(context.prevSibling());
+    UnorderedListNode *prevlist = nullptr;
+    auto nodes = root->children;
+    std::reverse(nodes.begin(), nodes.end());
+    for (auto node : nodes) {
+      if (node->type == NodeType::UnorderedList) {
+        prevlist = static_cast<UnorderedListNode*>(node);
+        break;
+      }
+    }
 
     int depth = context.index / 4;
     if (prevlist && depth > prevlist->index / 4) {
