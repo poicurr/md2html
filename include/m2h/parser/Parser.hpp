@@ -357,30 +357,24 @@ class Parser {
     context.indent = 0;
 
     // ul
-    auto nodes = root->children;
-    std::reverse(nodes.begin(), nodes.end());
-    UnorderedListNode *prevlist = nullptr;
-    for (auto node : nodes) {
-      if (node->type == NodeType::UnorderedList) {
-        prevlist = static_cast<UnorderedListNode *>(node);
-        break;
-      }
-    }
+    UnorderedListNode *prevlist =
+        static_cast<UnorderedListNode *>(context.prevSibling());
 
     int depth = context.index / 4;
-    if (prevlist && depth != 0) {
+    if (prevlist && depth > prevlist->index / 4) {
+      auto parent = prevlist;
       for (int i = 0; i < depth; ++i) {
-        auto nodes = prevlist->children;
+        auto nodes = parent->children;
         std::reverse(nodes.begin(), nodes.end());
         for (auto node : nodes) {
           if (node->type == NodeType::UnorderedList) {
-            prevlist = static_cast<UnorderedListNode *>(node);
+            parent = static_cast<UnorderedListNode *>(node);
             break;
           }
         }
       }
-      context.parent = prevlist;
-      if (depth > prevlist->index / 4) {
+      context.parent = parent;
+      if (depth > parent->index / 4) {
         auto unorderedlist = new UnorderedListNode(context.index);
         context.append(unorderedlist);
         context.parent = unorderedlist;
@@ -411,6 +405,7 @@ class Parser {
       context.indent += it->value.size();
       ++it;
     }
+    --it;
 
     // ol
     auto prevSibling = context.prevSibling();
@@ -423,11 +418,9 @@ class Parser {
     }
 
     // li
-    while (it->kind == TokenKind::Indent) {
-      context.index += it->value.size();
-      ++it;
-    }
-    context.append(new OrderedListItemNode(it->value));
+    auto item = new OrderedListItemNode();
+    context.append(item);
+    context.parent = item;
 
     return true;
   }

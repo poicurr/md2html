@@ -91,12 +91,12 @@ struct OrderedListNode : Node {
 };
 
 struct OrderedListItemNode : Node {
-  OrderedListItemNode(const std::string& text)
-      : Node(NodeType::OrderedListItem), text{text} {}
+  OrderedListItemNode() : Node(NodeType::OrderedListItem) {}
   virtual void print(std::ostream& ost, const std::string& prefix) override {
-    ost << prefix << "<li>" << text << "</li>" << std::endl;
+    ost << prefix << "<li>" << std::endl;
+    if (!children.empty()) children[0]->print(ost, prefix + "  ");
+    ost << prefix << "</li>" << std::endl;
   }
-  std::string text;
 };
 
 struct UnorderedListNode : Node {
