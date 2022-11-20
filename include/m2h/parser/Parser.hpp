@@ -313,6 +313,7 @@ class Parser {
       code += it->value;
       ++it;
     }
+    code = std::string(context.indent - 4, ' ') + code;
     --it;
     context.index = 0;
     context.indent = 0;
@@ -365,7 +366,7 @@ class Parser {
     std::reverse(nodes.begin(), nodes.end());
     for (auto node : nodes) {
       if (node->type == NodeType::UnorderedList) {
-        prevlist = static_cast<UnorderedListNode*>(node);
+        prevlist = static_cast<UnorderedListNode *>(node);
         break;
       }
     }
