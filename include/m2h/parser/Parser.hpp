@@ -364,40 +364,32 @@ class Parser {
     context.indent = 0;
 
     // ul
-    UnorderedListNode *prevlist = nullptr;
-    auto nodes = root->children;
-    std::reverse(nodes.begin(), nodes.end());
-    for (auto node : nodes) {
-      if (node->type == NodeType::UnorderedList) {
-        prevlist = static_cast<UnorderedListNode *>(node);
-        break;
-      }
-    }
+    auto prevSibling = context.prevSibling();
+    if (prevSibling && prevSibling->type == NodeType::UnorderedList) {
+      UnorderedListNode *prevlist =
+          static_cast<UnorderedListNode *>(prevSibling);
 
-    int depth = context.index / 4;
-    if (prevlist && depth > prevlist->index / 4) {
-      auto parent = prevlist;
-      for (int i = 0; i < depth; ++i) {
-        auto nodes = parent->children;
-        std::reverse(nodes.begin(), nodes.end());
-        for (auto node : nodes) {
-          if (node->type == NodeType::UnorderedList) {
-            parent = static_cast<UnorderedListNode *>(node);
-            break;
+      int currDepth = context.index / 4;
+      int prevDepth = prevlist->index / 4;
+
+      if (currDepth > prevDepth) {
+        auto parent = prevlist;
+        for (int i = 1; i < currDepth; ++i) {
+          auto nodes = parent->children;
+          std::reverse(nodes.begin(), nodes.end());
+          for (auto node : nodes) {
+            if (node->type == NodeType::UnorderedList) {
+              parent = static_cast<UnorderedListNode *>(node);
+              break;
+            }
           }
         }
+        context.parent = parent;
       }
-      context.parent = parent;
-      if (depth > parent->index / 4) {
-        auto unorderedlist = new UnorderedListNode(context.index);
-        context.append(unorderedlist);
-        context.parent = unorderedlist;
-      }
-    } else {
-      auto unorderedlist = new UnorderedListNode(context.index);
-      context.append(unorderedlist);
-      context.parent = unorderedlist;
     }
+    auto unorderedlist = new UnorderedListNode(context.index);
+    context.append(unorderedlist);
+    context.parent = unorderedlist;
 
     // li
     auto item = new UnorderedListItemNode();
