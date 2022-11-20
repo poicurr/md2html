@@ -384,12 +384,21 @@ class Parser {
             }
           }
         }
+        // add
         context.parent = parent;
+        auto unorderedlist = new UnorderedListNode(context.index);
+        context.append(unorderedlist);
+        context.parent = unorderedlist;
+      } else {
+        // merge
+        context.parent = prevlist;
       }
+    } else {
+      // add
+      auto unorderedlist = new UnorderedListNode(context.index);
+      context.append(unorderedlist);
+      context.parent = unorderedlist;
     }
-    auto unorderedlist = new UnorderedListNode(context.index);
-    context.append(unorderedlist);
-    context.parent = unorderedlist;
 
     // li
     auto item = new UnorderedListItemNode();
