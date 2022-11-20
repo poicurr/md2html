@@ -313,8 +313,8 @@ class Parser {
       code += it->value;
       ++it;
     }
-    code = std::string(context.indent - 4, ' ') + code;
     --it;
+    code = std::string(context.indent - 4, ' ') + code;
     context.index = 0;
     context.indent = 0;
 
@@ -334,6 +334,8 @@ class Parser {
       if (it->kind != TokenKind::BackQuote) return false;
       ++it;
     }
+    if (it->kind != TokenKind::NewLine) return false;
+    ++it;
 
     auto code = std::string{};
     while (it->kind != TokenKind::BackQuote) {
@@ -343,6 +345,7 @@ class Parser {
         code += it->value;
       ++it;
     }
+    code.resize(code.size() - 1);
 
     for (int i = 0; i < 3; ++i) {
       if (it->kind != TokenKind::BackQuote) return false;
