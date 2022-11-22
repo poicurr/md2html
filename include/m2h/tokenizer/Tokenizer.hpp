@@ -110,6 +110,7 @@ class Tokenizer {
     fallback:
       tokenizeText(p);
     }
+    tokens.emplace_back(TokenKind::Eof, "", p);
     return tokens;
   }
 

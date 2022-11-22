@@ -184,6 +184,7 @@ class Parser {
     auto code = std::string{};
     while (it->kind != TokenKind::BackQuote ||
            (it + 1)->kind != TokenKind::BackQuote) {
+      if ((it + 1)->kind == TokenKind::Eof) return false;
       code += it->value;
       ++it;
     }
@@ -206,7 +207,8 @@ class Parser {
     ++it;
 
     auto code = std::string{};
-    while (it->kind != TokenKind::BackQuote) {
+    while (it->kind != TokenKind::BackQuote && it->kind != TokenKind::Eof) {
+      if (it->kind == TokenKind::Eof) return false;
       code += it->value;
       ++it;
     }
@@ -217,6 +219,9 @@ class Parser {
     if (prevSibling && prevSibling->type == NodeType::Paragraph) {
       auto paragraph = static_cast<ParagraphNode *>(prevSibling);
       paragraph->text += "<code>" + escape(code) + "</code>";
+    } else {
+      context.append(new ParagraphNode(context.index,
+                                       "<code>" + escape(code) + "</code>"));
     }
     return true;
   }
@@ -339,11 +344,16 @@ class Parser {
 
     auto code = std::string{};
     while (it->kind != TokenKind::BackQuote) {
+      if (it->kind == TokenKind::Eof) return false;
       if (it->kind == TokenKind::NewLine)
         code += "\n";
       else
         code += it->value;
       ++it;
+    }
+    if (it->kind == TokenKind::Eof) {
+      std::cout << "reached eof" << std::endl;
+      return false;
     }
     code.resize(code.size() - 1);
 
@@ -353,7 +363,13 @@ class Parser {
     }
     --it;
 
-    context.append(new CodeBlockNode(escape(code)));
+    auto prevSibling = context.prevSibling();
+    if (prevSibling && prevSibling->type == NodeType::CodeBlock) {
+      auto codeblock = static_cast<CodeBlockNode *>(prevSibling);
+      codeblock->text += "\n" + escape(code);
+    } else {
+      context.append(new CodeBlockNode(escape(code)));
+    }
     return true;
   }
 

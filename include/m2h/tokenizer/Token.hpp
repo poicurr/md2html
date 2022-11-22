@@ -14,6 +14,7 @@ enum class TokenKind {
   NewLine,
   BackQuote,  // `
   Bracket,  // []()
+  Eof
 };
 
 struct Token {
