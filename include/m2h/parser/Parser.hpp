@@ -351,10 +351,6 @@ class Parser {
         code += it->value;
       ++it;
     }
-    if (it->kind == TokenKind::Eof) {
-      std::cout << "reached eof" << std::endl;
-      return false;
-    }
     code.resize(code.size() - 1);
 
     for (int i = 0; i < 3; ++i) {
