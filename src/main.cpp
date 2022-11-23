@@ -2,8 +2,8 @@
 #include <iostream>
 #include <string>
 
-#include "m2h/parser/Parser.hpp"
-#include "m2h/tokenizer/Tokenizer.hpp"
+#include "parser/Parser.hpp"
+#include "tokenizer/Tokenizer.hpp"
 
 const std::string styletag =
     "<link rel=\"stylesheet\" href=\"./resources/style.css\" />";

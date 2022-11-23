@@ -2,6 +2,8 @@
 
 #include <string>
 
+namespace m2h {
+
 // ------------------------------------
 // Predicates
 // ------------------------------------
@@ -92,3 +94,5 @@ std::string trimRight(const std::string& s) {
 }
 
 std::string trim(const std::string& s) { return trimLeft(trimRight(s)); }
+
+}
