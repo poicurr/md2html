@@ -2,7 +2,7 @@
 markdown to html converter written in C++
 
 ## Build Instruction
-    git clone https://github.com/unkomogu2/md2html.git
+    git clone https://github.com/poicurr/md2html.git
     cd ./md2html
     ./build.sh
 
